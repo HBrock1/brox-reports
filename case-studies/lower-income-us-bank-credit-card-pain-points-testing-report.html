@@ -1,0 +1,1402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lower Income US Bank Credit Card Pain Points Testing Report | Brox.AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lexend:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brox-white: #ffffff;
+      --brox-black: #050505;
+      --brox-blue: #0080ff;
+      --brox-teal: #26d3ae;
+      --brox-pink: #ff3a70;
+      --brox-orange: #ffb200;
+      --brox-bg-light: #f8f8fc;
+      --brox-border-light: rgba(0, 0, 0, 0.08);
+      --font-display: 'Lexend', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    * { margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--brox-black);
+      background: var(--brox-white);
+      width: 1000px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      padding-top: 76px;
+    }
+
+    .header {
+      margin-bottom: 40px;
+    }
+
+    .brox-logo {
+      height: 45px;
+      width: auto;
+    }
+
+    h1 {
+      font-family: var(--font-display);
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--brox-black);
+      margin-bottom: 16px;
+    }
+
+    h2 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: -0.01em;
+      color: var(--brox-black);
+      margin-bottom: 8px;
+    }
+
+    h3 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--brox-black);
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      font-family: var(--font-body);
+      font-size: 16px;
+      color: rgba(5, 5, 5, 0.6);
+      margin-bottom: 24px;
+    }
+
+    .section {
+      margin-bottom: 28px;
+    }
+
+    .section-divider {
+      border: none;
+      border-top: 2px solid var(--brox-blue);
+      margin: 40px 0 30px 0;
+    }
+
+    .section-number {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--brox-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      margin-bottom: 16px;
+      display: block;
+    }
+
+    /* Stat Grid */
+    .brox-stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 32px 0;
+    }
+
+    .brox-stat-card {
+      background: var(--brox-white);
+      border: 1px solid var(--brox-border-light);
+      border-radius: 0;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .brox-stat-value {
+      font-family: var(--font-display);
+      font-size: 36px;
+      font-weight: 700;
+      color: var(--brox-black);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .brox-stat-value-accent {
+      color: var(--brox-pink);
+    }
+
+    .brox-stat-value-highlight {
+      color: var(--brox-blue);
+    }
+
+    .brox-stat-label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(5, 5, 5, 0.5);
+    }
+
+    /* Quote Block */
+    .brox-quote {
+      padding: 20px 24px;
+      background: var(--brox-bg-light);
+      border-left: 3px solid var(--brox-blue);
+      border-radius: 0;
+      margin: 24px 0;
+    }
+
+    .brox-quote p {
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--brox-black);
+    }
+
+    .brox-quote strong {
+      font-weight: 600;
+    }
+
+    /* Digital Twin Explainer */
+    .digital-twin-explainer {
+      background: var(--brox-bg-light);
+      border: 1px solid var(--brox-blue);
+      border-radius: 0;
+      padding: 24px;
+      margin: 24px 0;
+    }
+
+    .digital-twin-explainer h4 {
+      font-family: var(--font-display);
+      color: var(--brox-blue);
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 12px;
+    }
+
+    .digital-twin-explainer p {
+      font-size: 13px;
+      color: var(--brox-black);
+      line-height: 1.6;
+    }
+
+    /* Process Steps */
+    .brox-process-steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-top: 24px;
+    }
+
+    .brox-step {
+      background: var(--brox-white);
+      border: 1px solid var(--brox-border-light);
+      border-radius: 0;
+      padding: 16px;
+    }
+
+    .brox-step-number {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--brox-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 8px;
+    }
+
+    .brox-step-title {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--brox-black);
+      margin-bottom: 6px;
+    }
+
+    .brox-step-desc {
+      font-family: var(--font-body);
+      font-size: 12px;
+      line-height: 1.4;
+      color: rgba(5, 5, 5, 0.6);
+    }
+
+    /* Tags Grid */
+    .brox-tags-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin: 16px 0;
+    }
+
+    .brox-tag {
+      display: inline-block;
+      padding: 10px 12px;
+      background: var(--brox-white);
+      border: 1px solid var(--brox-border-light);
+      border-radius: 0;
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 400;
+      color: var(--brox-black);
+      text-align: center;
+    }
+
+    /* Metrics Grid */
+    .brox-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .brox-metric-card {
+      background: var(--brox-white);
+      border: 1px solid var(--brox-border-light);
+      border-radius: 0;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .brox-metric-name {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--brox-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 8px;
+    }
+
+    .brox-metric-desc {
+      font-family: var(--font-body);
+      font-size: 11px;
+      line-height: 1.4;
+      color: rgba(5, 5, 5, 0.5);
+    }
+
+    /* Key Finding Card */
+    .brox-finding {
+      display: flex;
+      align-items: flex-start;
+      gap: 20px;
+      padding: 24px;
+      background: var(--brox-white);
+      border: 1px solid var(--brox-border-light);
+      border-radius: 0;
+      margin-bottom: 16px;
+    }
+
+    .brox-finding-number {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--brox-blue);
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .brox-finding-content h4 {
+      font-family: var(--font-display);
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--brox-black);
+      margin-bottom: 6px;
+    }
+
+    .brox-finding-content p {
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.5;
+      color: rgba(5, 5, 5, 0.7);
+    }
+
+    .brox-finding-highlight {
+      font-family: var(--font-display);
+      font-weight: 600;
+      color: var(--brox-pink);
+    }
+
+    /* Tables */
+    .brox-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-body);
+      font-size: 13px;
+      margin: 16px 0;
+    }
+
+    .brox-table th {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(5, 5, 5, 0.6);
+      text-align: left;
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--brox-border-light);
+      background: var(--brox-bg-light);
+    }
+
+    .brox-table td {
+      padding: 8px 12px;
+      border-bottom: 1px solid var(--brox-border-light);
+      color: var(--brox-black);
+    }
+
+    .brox-table tbody tr:hover {
+      background: rgba(0, 128, 255, 0.03);
+    }
+
+    .brox-table .rank-1 {
+      background: rgba(255, 58, 112, 0.08);
+    }
+
+    .brox-table .rank-2 {
+      background: rgba(255, 58, 112, 0.05);
+    }
+
+    .brox-table .rank-3 {
+      background: rgba(255, 58, 112, 0.03);
+    }
+
+    /* Badges */
+    .brox-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 0;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+    }
+
+    .brox-badge-accent {
+      background: rgba(255, 58, 112, 0.15);
+      color: var(--brox-pink);
+    }
+
+    .brox-badge-primary {
+      background: rgba(0, 128, 255, 0.15);
+      color: var(--brox-blue);
+    }
+
+    .brox-badge-success {
+      background: rgba(38, 211, 174, 0.15);
+      color: #1a9e7d;
+    }
+
+    .brox-badge-warning {
+      background: rgba(255, 178, 0, 0.15);
+      color: #b37d00;
+    }
+
+    /* Insight Cards */
+    .brox-insights-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      margin: 16px 0;
+    }
+
+    .brox-insight-card {
+      background: var(--brox-white);
+      border: 1px solid var(--brox-border-light);
+      border-radius: 0;
+      padding: 20px;
+    }
+
+    .brox-insight-title {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--brox-black);
+      margin-bottom: 8px;
+    }
+
+    .brox-insight-text {
+      font-family: var(--font-body);
+      font-size: 13px;
+      line-height: 1.5;
+      color: rgba(5, 5, 5, 0.7);
+    }
+
+    /* Bar Charts */
+    .brox-bar-chart {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .brox-bar-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brox-bar-label {
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--brox-black);
+      min-width: 200px;
+      flex-shrink: 0;
+    }
+
+    .brox-bar-container {
+      flex: 1;
+      height: 24px;
+      background: var(--brox-bg-light);
+      border-radius: 0;
+      overflow: hidden;
+    }
+
+    .brox-bar-fill {
+      height: 100%;
+      background: var(--brox-blue);
+      border-radius: 0;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 8px;
+    }
+
+    .brox-bar-fill-accent {
+      background: var(--brox-pink);
+    }
+
+    .brox-bar-value {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--brox-white);
+    }
+
+    /* Comparison Cards */
+    .brox-comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin: 24px 0;
+    }
+
+    .brox-comparison-card {
+      background: var(--brox-white);
+      border: 1px solid var(--brox-border-light);
+      border-radius: 0;
+      padding: 32px;
+      text-align: center;
+    }
+
+    .brox-comparison-card.winner {
+      border-color: var(--brox-teal);
+      border-width: 2px;
+    }
+
+    .brox-comparison-label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: rgba(5, 5, 5, 0.5);
+      margin-bottom: 16px;
+    }
+
+    .brox-comparison-value {
+      font-family: var(--font-display);
+      font-size: 48px;
+      font-weight: 700;
+      color: var(--brox-black);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .brox-comparison-subvalue {
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: rgba(5, 5, 5, 0.6);
+    }
+
+    .brox-winner-badge {
+      display: inline-block;
+      background: var(--brox-teal);
+      color: var(--brox-white);
+      padding: 6px 12px;
+      border-radius: 0;
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 16px;
+    }
+
+    /* Recommendations */
+    .rec-section {
+      margin-bottom: 24px;
+    }
+
+    .rec-section-title {
+      font-family: var(--font-display);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--brox-blue);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 12px;
+    }
+
+    .rec-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--brox-border-light);
+    }
+
+    .rec-number {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      color: rgba(5, 5, 5, 0.4);
+      min-width: 24px;
+    }
+
+    .rec-text {
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: var(--brox-black);
+    }
+
+    /* Footer */
+    .footer {
+      margin-top: 40px;
+      padding-top: 16px;
+      border-top: 1px solid var(--brox-border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-text {
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: rgba(5, 5, 5, 0.5);
+    }
+
+    /* Closing Section */
+    .closing-section {
+      text-align: center;
+      padding: 40px 0;
+      background: var(--brox-bg-light);
+      margin: 40px -20px -40px -20px;
+      padding: 60px 40px;
+    }
+
+    .closing-section .brox-logo {
+      height: 60px;
+      margin-bottom: 16px;
+    }
+
+    .closing-tagline {
+      font-family: var(--font-body);
+      font-size: 16px;
+      color: rgba(5, 5, 5, 0.6);
+      max-width: 500px;
+      margin: 0 auto 32px auto;
+    }
+
+    .contact-info {
+      font-family: var(--font-body);
+      font-size: 14px;
+      color: rgba(5, 5, 5, 0.6);
+      margin-top: 32px;
+    }
+
+    .contact-info strong {
+      color: var(--brox-black);
+    }
+  </style>
+</head>
+<body>
+<header style="position: fixed; top: 0; left: 0; right: 0; height: 36px; z-index: 1; display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 0 24px; background: #f8f8fc; border-bottom: 1px solid rgba(0, 0, 0, 0.03);">
+  <a href="https://reports.brox.ai" style="text-decoration: none;">
+    <img src="https://raw.githubusercontent.com/HBrock1/logo-assets/main/brox-brandmark.png" alt="Brox.AI" style="height: 18px; width: auto;">
+  </a>
+  <div>
+    <a href="mailto:humans@brox.ai" style="display: flex; align-items: center; gap: 6px; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 400; color: rgba(5, 5, 5, 0.6); text-decoration: none;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+      </svg>
+      humans@brox.ai
+    </a>
+  </div>
+</header>
+
+  <!-- Header -->
+  <header class="header">
+    <img src="https://raw.githubusercontent.com/HBrock1/logo-assets/main/brox-logo.png" alt="Brox.AI" class="brox-logo">
+  </header>
+
+  <!-- Title Section -->
+  <div class="section">
+    <h1>Lower Income US Bank Credit Card Pain Points Testing Report</h1>
+    <p class="subtitle">Comprehensive analysis of 226 customer-sourced solutions tested on 2,000 digital twins representing lower income banking customers</p>
+
+    <div class="brox-stat-grid">
+      <div class="brox-stat-card">
+        <div class="brox-stat-value">226</div>
+        <div class="brox-stat-label">Ideas Tested</div>
+      </div>
+      <div class="brox-stat-card">
+        <div class="brox-stat-value">2,000</div>
+        <div class="brox-stat-label">Digital Twins</div>
+      </div>
+      <div class="brox-stat-card">
+        <div class="brox-stat-value">5</div>
+        <div class="brox-stat-label">Metrics Evaluated</div>
+      </div>
+      <div class="brox-stat-card">
+        <div class="brox-stat-value">10</div>
+        <div class="brox-stat-label">Categories</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Project Overview -->
+  <div class="section">
+    <span class="section-number">01 — Project Overview</span>
+    <h2>Research Methodology</h2>
+    <p class="subtitle">A comprehensive 8-step process to identify and validate credit card solutions for lower income customers</p>
+
+    <div class="brox-quote">
+      <p>This report presents findings from a comprehensive study testing solutions to credit card pain points for lower income US bank customers. The study used Brox.AI digital twins to evaluate 226 unique ideas across multiple dimensions.</p>
+    </div>
+
+    <div class="digital-twin-explainer">
+      <h4>What Are Digital Twins?</h4>
+      <p>Brox.AI digital twins are one-to-one AI representations of real people. Each digital twin is created from extensive survey data, behavioral patterns, and preference profiles collected from actual customers. These digital representations accurately simulate how real individuals would respond to new products, features, and ideas—enabling rapid testing at scale without the time and cost of traditional focus groups or surveys. Our digital twins predict actual human decisions with 85-93% accuracy.</p>
+    </div>
+
+    <div class="brox-process-steps">
+      <div class="brox-step">
+        <div class="brox-step-number">Step 1</div>
+        <div class="brox-step-title">Identify Pain Points</div>
+        <div class="brox-step-desc">Surveyed 2,000+ lower income bank customers about credit card pain points and their suggested solutions</div>
+      </div>
+      <div class="brox-step">
+        <div class="brox-step-number">Step 2</div>
+        <div class="brox-step-title">Create Comparison Set</div>
+        <div class="brox-step-desc">Generated additional solutions using ChatGPT for comparison against human ideas</div>
+      </div>
+      <div class="brox-step">
+        <div class="brox-step-number">Step 3</div>
+        <div class="brox-step-title">Structure Suggestions</div>
+        <div class="brox-step-desc">Formatted all human suggestions into testable format for evaluation</div>
+      </div>
+      <div class="brox-step">
+        <div class="brox-step-number">Step 4</div>
+        <div class="brox-step-title">Categorize</div>
+        <div class="brox-step-desc">Assigned each idea to one of 10 categories for organized analysis</div>
+      </div>
+      <div class="brox-step">
+        <div class="brox-step-number">Step 5</div>
+        <div class="brox-step-title">Initial Testing</div>
+        <div class="brox-step-desc">Tested all 226 ideas on 300 digital twins across 5 metrics</div>
+      </div>
+      <div class="brox-step">
+        <div class="brox-step-number">Step 6</div>
+        <div class="brox-step-title">Filter Top Ideas</div>
+        <div class="brox-step-desc">Selected top 15 ideas based on index scores for deep analysis</div>
+      </div>
+      <div class="brox-step">
+        <div class="brox-step-number">Step 7</div>
+        <div class="brox-step-title">Final Testing</div>
+        <div class="brox-step-desc">Tested 15 finalists on all 2,000 digital twins for comprehensive validation</div>
+      </div>
+      <div class="brox-step">
+        <div class="brox-step-number">Step 8</div>
+        <div class="brox-step-title">Produce Report</div>
+        <div class="brox-step-desc">Compiled results, insights, and strategic recommendations</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Categories & Metrics -->
+  <div class="section">
+    <span class="section-number">02 — Categories & Metrics</span>
+    <h2>Evaluation Framework</h2>
+    <p class="subtitle">10 idea categories evaluated across 5 key metrics on a 1-5 scale</p>
+
+    <h3>Idea Categories</h3>
+    <div class="brox-tags-grid">
+      <div class="brox-tag">Credit Limit Management</div>
+      <div class="brox-tag">Security & Authentication</div>
+      <div class="brox-tag">Rewards & Benefits</div>
+      <div class="brox-tag">Customer Support & Service</div>
+      <div class="brox-tag">Spending Controls & Alerts</div>
+      <div class="brox-tag">App & Interface Usability</div>
+      <div class="brox-tag">Mobile & Digital Payments</div>
+      <div class="brox-tag">Installment & Payment Flexibility</div>
+      <div class="brox-tag">Fees & Interest Rates</div>
+      <div class="brox-tag">Transparency & Clarity</div>
+    </div>
+
+    <h3 style="margin-top: 32px;">Evaluation Metrics (1-5 Scale)</h3>
+    <div class="brox-metrics-grid">
+      <div class="brox-metric-card">
+        <div class="brox-metric-name">Importance</div>
+        <div class="brox-metric-desc">How important would this idea be to you if implemented by your bank?</div>
+      </div>
+      <div class="brox-metric-card">
+        <div class="brox-metric-name">Relevance</div>
+        <div class="brox-metric-desc">How relevant would this solution be to your credit card experiences?</div>
+      </div>
+      <div class="brox-metric-card">
+        <div class="brox-metric-name">Effectiveness</div>
+        <div class="brox-metric-desc">How effective do you think this idea is at solving the pain point?</div>
+      </div>
+      <div class="brox-metric-card">
+        <div class="brox-metric-name">Switching Likelihood</div>
+        <div class="brox-metric-desc">How likely would you be to switch banks if another implemented this?</div>
+      </div>
+      <div class="brox-metric-card">
+        <div class="brox-metric-name">Innovation</div>
+        <div class="brox-metric-desc">How innovative do you think this idea is in solving a pain point?</div>
+      </div>
+    </div>
+
+    <div class="brox-quote" style="margin-top: 24px;">
+      <p><strong>Index Score:</strong> Sum of all 5 metric averages. Maximum possible score: <span class="brox-finding-highlight">25 points</span>. Provides a comprehensive measure of each idea's overall potential.</p>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Executive Summary -->
+  <div class="section">
+    <span class="section-number">03 — Executive Summary</span>
+    <h2>Key Findings</h2>
+    <p class="subtitle">Three critical insights from the comprehensive pain points analysis of lower income customers</p>
+
+    <div class="brox-finding">
+      <div class="brox-finding-number">1</div>
+      <div class="brox-finding-content">
+        <h4>Clear Winner Identified</h4>
+        <p><strong>'Fair Interest and Approved Deduction Policy'</strong> achieved the highest Index Score of <span class="brox-finding-highlight">21.5/25</span>, demonstrating strong performance across all metrics with lower income customers.</p>
+      </div>
+    </div>
+
+    <div class="brox-finding">
+      <div class="brox-finding-number">2</div>
+      <div class="brox-finding-content">
+        <h4>Fees Dominate Customer Priorities</h4>
+        <p><span class="brox-finding-highlight">11 of 15</span> top ideas (69%) relate to fees and interest rates. This overwhelming concentration indicates that cost-related pain points are the primary concern for lower income credit card customers.</p>
+      </div>
+    </div>
+
+    <div class="brox-finding">
+      <div class="brox-finding-number">3</div>
+      <div class="brox-finding-content">
+        <h4>Human Ideas Outperform AI</h4>
+        <p>Human-generated ideas scored <span class="brox-finding-highlight">17.3</span> average index vs ChatGPT's <span class="brox-finding-highlight">15.5</span> — a 12% higher performance. Real customer insights prove more valuable than AI-generated solutions.</p>
+      </div>
+    </div>
+
+    <div class="brox-stat-grid" style="grid-template-columns: repeat(3, 1fr);">
+      <div class="brox-stat-card">
+        <div class="brox-stat-value brox-stat-value-accent">21.5</div>
+        <div class="brox-stat-label">Winning Score (/25)</div>
+      </div>
+      <div class="brox-stat-card">
+        <div class="brox-stat-value">69%</div>
+        <div class="brox-stat-label">Fee-Related Ideas in Top 15</div>
+      </div>
+      <div class="brox-stat-card">
+        <div class="brox-stat-value brox-stat-value-highlight">+12%</div>
+        <div class="brox-stat-label">Human vs AI Performance</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Top 15 Final Rankings -->
+  <div class="section">
+    <span class="section-number">04 — Final Rankings</span>
+    <h2>Top 15 Ideas</h2>
+    <p class="subtitle">Final scores from comprehensive testing on 2,000 lower income customer digital twins</p>
+
+    <table class="brox-table">
+      <thead>
+        <tr>
+          <th>Rank</th>
+          <th>Idea Name</th>
+          <th>Category</th>
+          <th>Important</th>
+          <th>Relevant</th>
+          <th>Effective</th>
+          <th>Switching</th>
+          <th>Innovation</th>
+          <th>Index</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="rank-1">
+          <td><strong>1</strong></td>
+          <td>Fair Interest and Approved Deduction Policy</td>
+          <td><span class="brox-badge brox-badge-accent">Fees & Interest</span></td>
+          <td>4.43</td>
+          <td>4.22</td>
+          <td>4.53</td>
+          <td>3.80</td>
+          <td>4.52</td>
+          <td><strong>21.5</strong></td>
+        </tr>
+        <tr class="rank-2">
+          <td><strong>2</strong></td>
+          <td>Fee Elimination and Full Transparency</td>
+          <td><span class="brox-badge brox-badge-accent">Fees & Interest</span></td>
+          <td>4.52</td>
+          <td>4.27</td>
+          <td>4.79</td>
+          <td>3.90</td>
+          <td>3.79</td>
+          <td><strong>21.3</strong></td>
+        </tr>
+        <tr class="rank-3">
+          <td><strong>3</strong></td>
+          <td>No-Annual-Fee Essential Needs Card Program</td>
+          <td><span class="brox-badge brox-badge-accent">Fees & Interest</span></td>
+          <td>4.59</td>
+          <td>4.52</td>
+          <td>4.74</td>
+          <td>3.56</td>
+          <td>3.73</td>
+          <td><strong>21.1</strong></td>
+        </tr>
+        <tr>
+          <td>4</td>
+          <td>Interest-Free Card and Installment Plan</td>
+          <td><span class="brox-badge brox-badge-accent">Fees & Interest</span></td>
+          <td>4.41</td>
+          <td>4.25</td>
+          <td>4.34</td>
+          <td>3.68</td>
+          <td>4.33</td>
+          <td><strong>21.0</strong></td>
+        </tr>
+        <tr>
+          <td>5</td>
+          <td>Fee Transparency and Annual Fee Elimination</td>
+          <td><span class="brox-badge brox-badge-accent">Fees & Interest</span></td>
+          <td>4.50</td>
+          <td>4.38</td>
+          <td>4.69</td>
+          <td>3.53</td>
+          <td>3.74</td>
+          <td><strong>20.8</strong></td>
+        </tr>
+        <tr>
+          <td>6</td>
+          <td>Instant Fraud Alert and Verification Call</td>
+          <td><span class="brox-badge brox-badge-primary">Security</span></td>
+          <td>4.66</td>
+          <td>4.11</td>
+          <td>4.62</td>
+          <td>3.09</td>
+          <td>4.34</td>
+          <td><strong>20.8</strong></td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>1% Interest Installment Card and Minimum Payment Interest Waiver</td>
+          <td><span class="brox-badge brox-badge-warning">Credit Limit</span></td>
+          <td>3.99</td>
+          <td>4.02</td>
+          <td>4.44</td>
+          <td>3.50</td>
+          <td>4.40</td>
+          <td><strong>20.4</strong></td>
+        </tr>
+        <tr>
+          <td>8</td>
+          <td>No-Annual-Fee Credit Card</td>
+          <td><span class="brox-badge brox-badge-accent">Fees & Interest</span></td>
+          <td>4.51</td>
+          <td>4.47</td>
+          <td>4.87</td>
+          <td>3.55</td>
+          <td>2.83</td>
+          <td><strong>20.2</strong></td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>Interest and Commission Reduction Program</td>
+          <td><span class="brox-badge brox-badge-accent">Fees & Interest</span></td>
+          <td>4.33</td>
+          <td>4.23</td>
+          <td>4.42</td>
+          <td>3.65</td>
+          <td>3.42</td>
+          <td><strong>20.1</strong></td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>Annual Card Fee Elimination or Automatic Refund</td>
+          <td><span class="brox-badge brox-badge-accent">Fees & Interest</span></td>
+          <td>4.27</td>
+          <td>4.21</td>
+          <td>4.70</td>
+          <td>3.30</td>
+          <td>3.41</td>
+          <td><strong>19.9</strong></td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>Fast Service and Instant Support</td>
+          <td><span class="brox-badge brox-badge-success">Support</span></td>
+          <td>4.38</td>
+          <td>4.13</td>
+          <td>4.59</td>
+          <td>3.16</td>
+          <td>3.52</td>
+          <td><strong>19.8</strong></td>
+        </tr>
+        <tr>
+          <td>12</td>
+          <td>Daily Interest and Debt Transparency Notifications</td>
+          <td><span class="brox-badge brox-badge-accent">Fees & Interest</span></td>
+          <td>4.04</td>
+          <td>3.94</td>
+          <td>4.41</td>
+          <td>2.48</td>
+          <td>4.09</td>
+          <td><strong>19.0</strong></td>
+        </tr>
+        <tr>
+          <td>13</td>
+          <td>Half-Price Card Interest for Payroll Customers</td>
+          <td><span class="brox-badge brox-badge-accent">Fees & Interest</span></td>
+          <td>3.80</td>
+          <td>3.57</td>
+          <td>4.34</td>
+          <td>3.21</td>
+          <td>3.66</td>
+          <td><strong>18.6</strong></td>
+        </tr>
+        <tr>
+          <td>14</td>
+          <td>Instant Approved Limit Increase</td>
+          <td><span class="brox-badge brox-badge-warning">Credit Limit</span></td>
+          <td>3.38</td>
+          <td>3.57</td>
+          <td>4.29</td>
+          <td>2.43</td>
+          <td>4.05</td>
+          <td><strong>17.7</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Qualitative Insights -->
+  <div class="section">
+    <span class="section-number">05 — Qualitative Insights</span>
+    <h2>Key Insights from Top Ideas</h2>
+    <p class="subtitle">Patterns and themes emerging from the highest-performing solutions for lower income customers</p>
+
+    <div class="brox-insights-grid">
+      <div class="brox-insight-card">
+        <div class="brox-insight-title">Cost Sensitivity is Paramount</div>
+        <div class="brox-insight-text">Lower income US bank customers show extreme sensitivity to fees and interest. The dominance of fee-related ideas suggests this should be the primary focus for improvements.</div>
+      </div>
+      <div class="brox-insight-card">
+        <div class="brox-insight-title">Annual Fee Elimination Desired</div>
+        <div class="brox-insight-text">Multiple top ideas address annual fees. Ideas proposing elimination or usage-based waivers scored consistently high across all metrics with this demographic.</div>
+      </div>
+      <div class="brox-insight-card">
+        <div class="brox-insight-title">Transparency Drives Effectiveness</div>
+        <div class="brox-insight-text">Ideas mentioning transparent fees scored higher on effectiveness. Fee elimination combined with transparency achieved 4.8/5 on Effectiveness.</div>
+      </div>
+      <div class="brox-insight-card">
+        <div class="brox-insight-title">Security Innovation Valued</div>
+        <div class="brox-insight-text">Instant Fraud Alert scored highest on Innovation (4.3/5). Proactive fraud detection with instant notification resonates strongly with lower income customers.</div>
+      </div>
+      <div class="brox-insight-card">
+        <div class="brox-insight-title">Switching Likelihood Modest</div>
+        <div class="brox-insight-text">Even best ideas only scored 3.9/5 on switching, suggesting customer loyalty exists. However, improvements remain valuable for retention strategies.</div>
+      </div>
+      <div class="brox-insight-card">
+        <div class="brox-insight-title">Interest-Free Alternatives Work</div>
+        <div class="brox-insight-text">'Interest-Free Card' performed strongly at 21.0/25. Replacing interest with fixed fees appeals to cost-conscious lower income customers.</div>
+      </div>
+      <div class="brox-insight-card">
+        <div class="brox-insight-title">Instant Services In Demand</div>
+        <div class="brox-insight-text">Ideas related to instant limit management scored well. Lower income customers want real-time control via mobile-first processes for credit decisions.</div>
+      </div>
+      <div class="brox-insight-card">
+        <div class="brox-insight-title">Support Speed Matters</div>
+        <div class="brox-insight-text">'Fast Service' ranked 11th with strong effectiveness (4.6/5). Reducing wait times and providing instant support is highly valued by this segment.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Results by Category -->
+  <div class="section">
+    <span class="section-number">06 — Category Analysis</span>
+    <h2>Results by Category</h2>
+    <p class="subtitle">Average Index Scores across all 10 idea categories (Initial Testing)</p>
+
+    <div class="brox-bar-chart">
+      <div class="brox-bar-item">
+        <div class="brox-bar-label">Installment & Payment Flexibility</div>
+        <div class="brox-bar-container">
+          <div class="brox-bar-fill brox-bar-fill-accent" style="width: 73.7%;">
+            <span class="brox-bar-value">18.4</span>
+          </div>
+        </div>
+      </div>
+      <div class="brox-bar-item">
+        <div class="brox-bar-label">Customer Support & Service</div>
+        <div class="brox-bar-container">
+          <div class="brox-bar-fill brox-bar-fill-accent" style="width: 73.6%;">
+            <span class="brox-bar-value">18.4</span>
+          </div>
+        </div>
+      </div>
+      <div class="brox-bar-item">
+        <div class="brox-bar-label">Fees & Interest Rates</div>
+        <div class="brox-bar-container">
+          <div class="brox-bar-fill brox-bar-fill-accent" style="width: 73.3%;">
+            <span class="brox-bar-value">18.3</span>
+          </div>
+        </div>
+      </div>
+      <div class="brox-bar-item">
+        <div class="brox-bar-label">Transparency & Clarity</div>
+        <div class="brox-bar-container">
+          <div class="brox-bar-fill" style="width: 69.7%;">
+            <span class="brox-bar-value">17.4</span>
+          </div>
+        </div>
+      </div>
+      <div class="brox-bar-item">
+        <div class="brox-bar-label">Security & Authentication</div>
+        <div class="brox-bar-container">
+          <div class="brox-bar-fill" style="width: 68.2%;">
+            <span class="brox-bar-value">17.1</span>
+          </div>
+        </div>
+      </div>
+      <div class="brox-bar-item">
+        <div class="brox-bar-label">Rewards & Benefits</div>
+        <div class="brox-bar-container">
+          <div class="brox-bar-fill" style="width: 67.2%;">
+            <span class="brox-bar-value">16.8</span>
+          </div>
+        </div>
+      </div>
+      <div class="brox-bar-item">
+        <div class="brox-bar-label">Credit Limit Management</div>
+        <div class="brox-bar-container">
+          <div class="brox-bar-fill" style="width: 67.1%;">
+            <span class="brox-bar-value">16.8</span>
+          </div>
+        </div>
+      </div>
+      <div class="brox-bar-item">
+        <div class="brox-bar-label">Spending Controls & Alerts</div>
+        <div class="brox-bar-container">
+          <div class="brox-bar-fill" style="width: 66.9%;">
+            <span class="brox-bar-value">16.7</span>
+          </div>
+        </div>
+      </div>
+      <div class="brox-bar-item">
+        <div class="brox-bar-label">App & Interface Usability</div>
+        <div class="brox-bar-container">
+          <div class="brox-bar-fill" style="width: 64.3%;">
+            <span class="brox-bar-value">16.1</span>
+          </div>
+        </div>
+      </div>
+      <div class="brox-bar-item">
+        <div class="brox-bar-label">Mobile & Digital Payments</div>
+        <div class="brox-bar-container">
+          <div class="brox-bar-fill" style="width: 62.3%;">
+            <span class="brox-bar-value">15.6</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="brox-quote" style="margin-top: 24px;">
+      <p><strong>Key Insight:</strong> The top 3 categories all score above 18.3/25, with Installment & Payment Flexibility and Customer Support sharing the lead at 18.4. However, Fees & Interest Rates has the most ideas (46) providing more actionable solutions for lower income customers.</p>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Human vs AI -->
+  <div class="section">
+    <span class="section-number">07 — Human vs AI</span>
+    <h2>Human vs AI-Generated Ideas</h2>
+    <p class="subtitle">Comparative performance analysis between customer-sourced and ChatGPT-generated solutions</p>
+
+    <div class="brox-comparison-grid">
+      <div class="brox-comparison-card winner">
+        <div class="brox-comparison-label">Human-Generated Ideas</div>
+        <div class="brox-comparison-value">17.3</div>
+        <div class="brox-comparison-subvalue">Average Index Score (/25)</div>
+        <div style="margin-top: 24px;">
+          <div style="font-family: var(--font-display); font-size: 36px; font-weight: 500; color: var(--brox-black);">198</div>
+          <div style="font-size: 13px; color: rgba(5, 5, 5, 0.6);">Ideas Tested</div>
+        </div>
+        <div class="brox-winner-badge">Winner +12%</div>
+      </div>
+      <div class="brox-comparison-card">
+        <div class="brox-comparison-label">ChatGPT-Generated Ideas</div>
+        <div class="brox-comparison-value">15.5</div>
+        <div class="brox-comparison-subvalue">Average Index Score (/25)</div>
+        <div style="margin-top: 24px;">
+          <div style="font-family: var(--font-display); font-size: 36px; font-weight: 500; color: var(--brox-black);">28</div>
+          <div style="font-size: 13px; color: rgba(5, 5, 5, 0.6);">Ideas Tested</div>
+        </div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 32px;">Performance Breakdown by Metric</h3>
+    <table class="brox-table">
+      <thead>
+        <tr>
+          <th>Source</th>
+          <th>Ideas</th>
+          <th>Important</th>
+          <th>Relevant</th>
+          <th>Effectiveness</th>
+          <th>Switching</th>
+          <th>Innovation</th>
+          <th>Index</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background: rgba(38, 211, 174, 0.08);">
+          <td><strong>Human</strong></td>
+          <td>198</td>
+          <td>3.6</td>
+          <td>3.6</td>
+          <td>4.1</td>
+          <td>2.6</td>
+          <td>3.5</td>
+          <td><strong>17.3</strong></td>
+        </tr>
+        <tr>
+          <td>ChatGPT</td>
+          <td>28</td>
+          <td>3.1</td>
+          <td>3.0</td>
+          <td>3.7</td>
+          <td>2.2</td>
+          <td>3.5</td>
+          <td>15.5</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="brox-quote" style="margin-top: 24px;">
+      <p><strong>Strategic Implication:</strong> Human-sourced ideas consistently outperform AI across all metrics except Innovation (tied at 3.5). This validates the value of customer research and suggests continued investment in gathering direct feedback from lower income customers for product development.</p>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Recommendations -->
+  <div class="section">
+    <span class="section-number">08 — Recommendations</span>
+    <h2>Strategic Recommendations</h2>
+    <p class="subtitle">Strategic priorities based on research findings for serving lower income customers</p>
+
+    <div class="rec-section">
+      <div class="rec-section-title">Immediate Priorities</div>
+      <div class="rec-item">
+        <div class="rec-number">1.</div>
+        <div class="rec-text">Review and reduce annual card fees or implement usage-based fee waivers for lower income customers</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-number">2.</div>
+        <div class="rec-text">Improve fee transparency in app and statements</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-number">3.</div>
+        <div class="rec-text">Consider introducing an interest-free card alternative with fixed fees tailored to lower income segments</div>
+      </div>
+    </div>
+
+    <div class="rec-section">
+      <div class="rec-section-title">Medium-Term Initiatives</div>
+      <div class="rec-item">
+        <div class="rec-number">4.</div>
+        <div class="rec-text">Implement proactive fraud detection with instant customer notification</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-number">5.</div>
+        <div class="rec-text">Develop real-time credit limit management through mobile app</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-number">6.</div>
+        <div class="rec-text">Create tiered interest rates rewarding on-time payment history</div>
+      </div>
+    </div>
+
+    <div class="rec-section">
+      <div class="rec-section-title">Strategic Considerations</div>
+      <div class="rec-item">
+        <div class="rec-number">7.</div>
+        <div class="rec-text">Human-sourced ideas outperformed AI — continue investing in customer research with lower income demographics</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-number">8.</div>
+        <div class="rec-text">Focus retention efforts on fee-related value propositions</div>
+      </div>
+      <div class="rec-item">
+        <div class="rec-number">9.</div>
+        <div class="rec-text">Consider payroll customer benefits for lower rates</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Top 6 Initial Testing -->
+  <div class="section">
+    <span class="section-number">09 — Initial Testing Leaders</span>
+    <h2>Top 6 Ideas from Initial Testing</h2>
+    <p class="subtitle">Highest performers from the initial 300 digital twin evaluation</p>
+
+    <table class="brox-table">
+      <thead>
+        <tr>
+          <th>Idea</th>
+          <th>Category</th>
+          <th>Important</th>
+          <th>Relevant</th>
+          <th>Effectiveness</th>
+          <th>Switching</th>
+          <th>Innovation</th>
+          <th>Index</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr class="rank-1">
+          <td><strong>No-Annual-Fee Essential Needs Card</strong></td>
+          <td><span class="brox-badge brox-badge-accent">Fees & Interest</span></td>
+          <td>4.4</td>
+          <td>4.4</td>
+          <td>4.6</td>
+          <td>3.4</td>
+          <td>3.9</td>
+          <td><strong>20.7</strong></td>
+        </tr>
+        <tr class="rank-2">
+          <td><strong>Fee Elimination and Transparency</strong></td>
+          <td><span class="brox-badge brox-badge-accent">Fees & Interest</span></td>
+          <td>4.5</td>
+          <td>3.9</td>
+          <td>4.7</td>
+          <td>3.9</td>
+          <td>3.6</td>
+          <td><strong>20.6</strong></td>
+        </tr>
+        <tr class="rank-2">
+          <td><strong>Fair Interest Policy</strong></td>
+          <td><span class="brox-badge brox-badge-accent">Fees & Interest</span></td>
+          <td>4.4</td>
+          <td>4.1</td>
+          <td>4.3</td>
+          <td>3.5</td>
+          <td>4.3</td>
+          <td><strong>20.6</strong></td>
+        </tr>
+        <tr>
+          <td>No-Annual-Fee Credit Card</td>
+          <td><span class="brox-badge brox-badge-accent">Fees & Interest</span></td>
+          <td>4.4</td>
+          <td>4.3</td>
+          <td>4.9</td>
+          <td>3.8</td>
+          <td>3.1</td>
+          <td><strong>20.5</strong></td>
+        </tr>
+        <tr>
+          <td>Instant Fraud Alert</td>
+          <td><span class="brox-badge brox-badge-primary">Security</span></td>
+          <td>4.6</td>
+          <td>3.9</td>
+          <td>4.6</td>
+          <td>3.1</td>
+          <td>4.3</td>
+          <td><strong>20.5</strong></td>
+        </tr>
+        <tr>
+          <td>1% Interest Installment Card</td>
+          <td><span class="brox-badge brox-badge-warning">Credit Limit</span></td>
+          <td>4.0</td>
+          <td>4.0</td>
+          <td>4.6</td>
+          <td>3.4</td>
+          <td>4.5</td>
+          <td><strong>20.5</strong></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Closing Section -->
+  <div class="closing-section">
+    <img src="https://raw.githubusercontent.com/HBrock1/logo-assets/main/brox-logo.png" alt="Brox.AI" class="brox-logo" style="margin: 0 auto 16px auto; display: block;">
+    <p class="closing-tagline">Digital twins that predict actual human decisions with 85-93% accuracy</p>
+
+    <div class="digital-twin-explainer" style="max-width: 700px; margin: 0 auto;">
+      <h4>About Our Digital Twins</h4>
+      <p>Each of our 2,000 digital twins is a one-to-one AI representation of a real person. Built from comprehensive behavioral data and preference profiles, these digital representations accurately simulate how real individuals respond to products, features, and ideas—enabling rapid, large-scale testing that would be impossible with traditional research methods.</p>
+    </div>
+
+    <div class="brox-stat-grid" style="max-width: 600px; margin: 32px auto; grid-template-columns: repeat(3, 1fr);">
+      <div class="brox-stat-card">
+        <div class="brox-stat-value">226</div>
+        <div class="brox-stat-label">Ideas Tested</div>
+      </div>
+      <div class="brox-stat-card">
+        <div class="brox-stat-value">2,000</div>
+        <div class="brox-stat-label">Digital Twins</div>
+      </div>
+      <div class="brox-stat-card">
+        <div class="brox-stat-value brox-stat-value-accent">21.5</div>
+        <div class="brox-stat-label">Top Score (/25)</div>
+      </div>
+    </div>
+
+    <p class="contact-info">
+      For more information: <strong>contact@brox.ai</strong>
+    </p>
+  </div>
+
+</body>
+</html>
