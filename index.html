@@ -52,41 +52,57 @@
       top: 0;
       left: 0;
       right: 0;
-      height: 52px;
+      height: 36px;
       z-index: 1;
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
-      padding: 0 32px;
-      background: rgba(248, 248, 252, 0.5);
-      backdrop-filter: blur(10px);
-      -webkit-backdrop-filter: blur(10px);
-      filter: saturate(2);
+      padding: 0 24px;
+      background: var(--brox-bg-light);
       border-bottom: 1px solid rgba(0, 0, 0, 0.03);
     }
 
-    .header-logo {
-      height: 24px;
-      width: auto;
-    }
-
-    .header-nav {
+    .header-left {
       display: flex;
       align-items: center;
-      gap: 20px;
+      gap: 16px;
     }
 
-    .header-nav a {
-      font-family: var(--font-body);
+    .header-logo {
+      font-family: var(--font-display);
       font-size: 14px;
-      font-weight: 400;
-      color: var(--brox-link-blue);
-      text-decoration: underline;
+      font-weight: 700;
+      color: var(--brox-black);
+      text-decoration: none;
+      letter-spacing: 0.05em;
     }
 
-    .header-nav a:hover {
-      color: var(--brox-blue);
+    .header-tagline {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(5, 5, 5, 0.5);
+    }
+
+    .header-right a {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 400;
+      color: rgba(5, 5, 5, 0.6);
+      text-decoration: none;
+    }
+
+    .header-right a:hover {
+      color: var(--brox-black);
+    }
+
+    .header-right svg {
+      width: 14px;
+      height: 14px;
     }
 
     /* Main Content */
@@ -94,7 +110,7 @@
       flex: 1;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 100px 40px 60px 40px; /* Extra top padding for fixed header */
+      padding: 76px 40px 60px 40px; /* Extra top padding for fixed header */
       width: 100%;
     }
 
@@ -270,12 +286,19 @@
 </head>
 <body>
   <header class="header">
-    <a href="https://brox.ai">
-      <img src="https://raw.githubusercontent.com/HBrock1/logo-assets/main/brox-brandmark.png" alt="Brox.AI" class="header-logo">
-    </a>
-    <nav class="header-nav">
-      <a href="https://brox.ai">brox.ai</a>
-    </nav>
+    <div class="header-left">
+      <a href="https://brox.ai" class="header-logo">XXOX</a>
+      <span class="header-tagline">AI to understand humans</span>
+    </div>
+    <div class="header-right">
+      <a href="mailto:humans@brox.ai">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+          <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+        </svg>
+        humans@brox.ai
+      </a>
+    </div>
   </header>
 
   <main class="main">
