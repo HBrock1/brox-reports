@@ -63,26 +63,9 @@
       border-bottom: 1px solid rgba(0, 0, 0, 0.03);
     }
 
-    .header-left {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-    }
-
     .header-logo {
-      font-family: var(--font-display);
-      font-size: 14px;
-      font-weight: 700;
-      color: var(--brox-black);
-      text-decoration: none;
-      letter-spacing: 0.05em;
-    }
-
-    .header-tagline {
-      font-family: var(--font-body);
-      font-size: 13px;
-      font-weight: 400;
-      color: rgba(5, 5, 5, 0.5);
+      height: 18px;
+      width: auto;
     }
 
     .header-right a {
@@ -286,10 +269,9 @@
 </head>
 <body>
   <header class="header">
-    <div class="header-left">
-      <a href="https://brox.ai" class="header-logo">XXOX</a>
-      <span class="header-tagline">AI to understand humans</span>
-    </div>
+    <a href="https://brox.ai">
+      <img src="https://raw.githubusercontent.com/HBrock1/logo-assets/main/brox-brandmark.png" alt="Brox.AI" class="header-logo">
+    </a>
     <div class="header-right">
       <a href="mailto:humans@brox.ai">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
