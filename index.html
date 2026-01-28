@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Case Studies & Reports | Brox.AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Lexend:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brox-white: #ffffff;
+      --brox-black: #050505;
+      --brox-blue: #0080ff;
+      --brox-link-blue: #0099ff;
+      --brox-teal: #26d3ae;
+      --brox-pink: #ff3a70;
+      --brox-orange: #ffb200;
+      --brox-bg-light: #f8f8fc;
+      --brox-border-light: rgba(0, 0, 0, 0.08);
+      --font-display: 'Lexend', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    * { margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--brox-black);
+      background: var(--brox-white);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    a {
+      color: var(--brox-link-blue);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Header */
+    .header {
+      padding: 24px 40px;
+      border-bottom: 1px solid var(--brox-border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .header-logo {
+      height: 40px;
+      width: auto;
+    }
+
+    .header-nav a {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--brox-black);
+      margin-left: 32px;
+    }
+
+    /* Main Content */
+    .main {
+      flex: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 60px 40px;
+      width: 100%;
+    }
+
+    .page-title {
+      font-family: var(--font-display);
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--brox-black);
+      margin-bottom: 12px;
+      letter-spacing: -0.02em;
+    }
+
+    .page-subtitle {
+      font-size: 16px;
+      color: rgba(5, 5, 5, 0.6);
+      margin-bottom: 48px;
+      max-width: 600px;
+    }
+
+    /* Case Studies Grid */
+    .case-studies-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 24px;
+    }
+
+    .case-study-card {
+      background: var(--brox-white);
+      border: 1px solid var(--brox-border-light);
+      border-radius: 0;
+      padding: 28px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .case-study-card:hover {
+      border-color: var(--brox-blue);
+      box-shadow: 0 4px 12px rgba(0, 128, 255, 0.08);
+    }
+
+    .case-study-meta {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .case-study-date {
+      font-size: 12px;
+      color: rgba(5, 5, 5, 0.5);
+      font-weight: 500;
+    }
+
+    .case-study-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      border-radius: 0;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.02em;
+      background: rgba(0, 128, 255, 0.12);
+      color: var(--brox-blue);
+    }
+
+    .case-study-badge.client {
+      background: rgba(38, 211, 174, 0.12);
+      color: #1a9e7d;
+    }
+
+    .case-study-badge.research {
+      background: rgba(255, 58, 112, 0.12);
+      color: var(--brox-pink);
+    }
+
+    .case-study-badge.analysis {
+      background: rgba(255, 178, 0, 0.12);
+      color: #b37d00;
+    }
+
+    .case-study-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--brox-black);
+      margin-bottom: 8px;
+      line-height: 1.3;
+    }
+
+    .case-study-title a {
+      color: inherit;
+    }
+
+    .case-study-title a:hover {
+      color: var(--brox-blue);
+      text-decoration: none;
+    }
+
+    .case-study-description {
+      font-size: 14px;
+      color: rgba(5, 5, 5, 0.7);
+      line-height: 1.5;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 80px 40px;
+      background: var(--brox-bg-light);
+      border: 1px dashed var(--brox-border-light);
+    }
+
+    .empty-state-title {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--brox-black);
+      margin-bottom: 8px;
+    }
+
+    .empty-state-text {
+      font-size: 14px;
+      color: rgba(5, 5, 5, 0.6);
+    }
+
+    /* Footer */
+    .footer {
+      border-top: 1px solid var(--brox-border-light);
+      padding: 24px 40px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-text {
+      font-size: 13px;
+      color: rgba(5, 5, 5, 0.5);
+    }
+
+    .footer-links a {
+      font-size: 13px;
+      color: rgba(5, 5, 5, 0.6);
+      margin-left: 24px;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .header {
+        padding: 20px 24px;
+      }
+
+      .main {
+        padding: 40px 24px;
+      }
+
+      .page-title {
+        font-size: 32px;
+      }
+
+      .case-studies-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer {
+        flex-direction: column;
+        gap: 16px;
+        text-align: center;
+      }
+
+      .footer-links a:first-child {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <a href="https://brox.ai">
+      <img src="https://raw.githubusercontent.com/HBrock1/logo-assets/main/brox-logo.png" alt="Brox.AI" class="header-logo">
+    </a>
+    <nav class="header-nav">
+      <a href="https://brox.ai">Home</a>
+      <a href="mailto:hamish@brox.ai">Contact</a>
+    </nav>
+  </header>
+
+  <main class="main">
+    <h1 class="page-title">Case Studies & Reports</h1>
+    <p class="page-subtitle">Research findings, client case studies, and analysis reports powered by Brox.AI's synthetic consumer intelligence platform.</p>
+
+    <div class="case-studies-grid" id="case-studies-container">
+      <!-- CASE_STUDIES_START -->
+      <!-- Case study cards will be inserted here by the publish-report skill -->
+      <!-- CASE_STUDIES_END -->
+    </div>
+
+    <div class="empty-state" id="empty-state">
+      <p class="empty-state-title">Coming Soon</p>
+      <p class="empty-state-text">Case studies and reports will be published here.</p>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span class="footer-text">Brox.AI - AI to understand humans</span>
+    <div class="footer-links">
+      <a href="https://brox.ai">brox.ai</a>
+      <a href="mailto:hamish@brox.ai">hamish@brox.ai</a>
+    </div>
+  </footer>
+
+  <script>
+    // Hide empty state if there are case studies
+    document.addEventListener('DOMContentLoaded', function() {
+      const container = document.getElementById('case-studies-container');
+      const emptyState = document.getElementById('empty-state');
+      const hasCards = container.querySelectorAll('.case-study-card').length > 0;
+
+      if (hasCards) {
+        emptyState.style.display = 'none';
+      } else {
+        container.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>
