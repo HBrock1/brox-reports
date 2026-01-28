@@ -46,25 +46,47 @@
       text-decoration: underline;
     }
 
-    /* Header */
+    /* Header - matches brox.ai */
     .header {
-      padding: 24px 40px;
-      border-bottom: 1px solid var(--brox-border-light);
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 52px;
+      z-index: 1;
       display: flex;
+      flex-direction: row;
       align-items: center;
       justify-content: space-between;
+      padding: 0 32px;
+      background: rgba(248, 248, 252, 0.5);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      filter: saturate(2);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.03);
     }
 
     .header-logo {
-      height: 40px;
+      height: 24px;
       width: auto;
     }
 
+    .header-nav {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+
     .header-nav a {
+      font-family: var(--font-body);
       font-size: 14px;
-      font-weight: 500;
-      color: var(--brox-black);
-      margin-left: 32px;
+      font-weight: 400;
+      color: var(--brox-link-blue);
+      text-decoration: underline;
+    }
+
+    .header-nav a:hover {
+      color: var(--brox-blue);
     }
 
     /* Main Content */
@@ -72,7 +94,7 @@
       flex: 1;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 60px 40px;
+      padding: 100px 40px 60px 40px; /* Extra top padding for fixed header */
       width: 100%;
     }
 
@@ -249,10 +271,10 @@
 <body>
   <header class="header">
     <a href="https://brox.ai">
-      <img src="https://raw.githubusercontent.com/HBrock1/logo-assets/main/brox-logo.png" alt="Brox.AI" class="header-logo">
+      <img src="https://raw.githubusercontent.com/HBrock1/logo-assets/main/brox-brandmark.png" alt="Brox.AI" class="header-logo">
     </a>
     <nav class="header-nav">
-      <a href="https://brox.ai">Home</a>
+      <a href="https://brox.ai">brox.ai</a>
     </nav>
   </header>
 
