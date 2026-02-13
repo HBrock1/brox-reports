@@ -1,0 +1,1779 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GLP-1 Perception Deep Dive | Brox.AI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Lexend:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --brox-white: #ffffff;
+      --brox-black: #050505;
+      --brox-blue: #0080ff;
+      --brox-teal: #26d3ae;
+      --brox-pink: #ff3a70;
+      --brox-orange: #ffb200;
+      --brox-bg-light: #f8f8fc;
+      --brox-border-light: rgba(0, 0, 0, 0.08);
+      --font-display: 'Lexend', system-ui, sans-serif;
+      --font-body: 'Inter', system-ui, sans-serif;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    * { margin: 0; padding: 0; }
+    html { -webkit-font-smoothing: antialiased; }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 14px;
+      line-height: 1.6;
+      color: var(--brox-black);
+      background: var(--brox-white);
+      width: 1000px;
+      margin: 0 auto;
+      padding: 86px 40px 50px 40px;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 50px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--brox-border-light);
+    }
+
+    .header-logo {
+      height: 40px;
+      width: auto;
+    }
+
+    .header-tag {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--brox-blue);
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 60px;
+      padding: 40px 0;
+    }
+
+    .hero-label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.2em;
+      color: var(--brox-blue);
+      margin-bottom: 16px;
+    }
+
+    .hero h1 {
+      font-family: var(--font-display);
+      font-size: 48px;
+      font-weight: 700;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+      color: var(--brox-black);
+      margin-bottom: 16px;
+    }
+
+    .hero-subtitle {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 400;
+      color: rgba(5, 5, 5, 0.6);
+      margin-bottom: 40px;
+    }
+
+    .hero-stats {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat-value {
+      font-family: var(--font-display);
+      font-size: 42px;
+      font-weight: 700;
+      color: var(--brox-black);
+      line-height: 1;
+    }
+
+    .hero-stat-value.accent { color: var(--brox-blue); }
+    .hero-stat-value.pink { color: var(--brox-pink); }
+    .hero-stat-value.teal { color: var(--brox-teal); }
+
+    .hero-stat-label {
+      font-family: var(--font-body);
+      font-size: 12px;
+      font-weight: 500;
+      color: rgba(5, 5, 5, 0.5);
+      margin-top: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .section {
+      margin-bottom: 50px;
+    }
+
+    .section-divider {
+      border: none;
+      border-top: 2px solid var(--brox-blue);
+      margin: 50px 0 40px 0;
+    }
+
+    .section-number {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      color: var(--brox-blue);
+      margin-bottom: 12px;
+    }
+
+    h2 {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--brox-black);
+      margin-bottom: 8px;
+      letter-spacing: -0.01em;
+    }
+
+    .section-subtitle {
+      font-family: var(--font-body);
+      font-size: 15px;
+      color: rgba(5, 5, 5, 0.6);
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+
+    h3 {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--brox-black);
+      margin-bottom: 16px;
+    }
+
+    /* Intro Box */
+    .intro-box {
+      background: var(--brox-bg-light);
+      border-left: 4px solid var(--brox-blue);
+      padding: 28px 32px;
+      margin-bottom: 32px;
+    }
+
+    .intro-box p {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--brox-black);
+      margin-bottom: 12px;
+    }
+
+    .intro-box p:last-child {
+      margin-bottom: 0;
+    }
+
+    .intro-box strong {
+      color: var(--brox-blue);
+    }
+
+    /* Stat Cards */
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin-bottom: 32px;
+    }
+
+    .stat-card {
+      background: var(--brox-white);
+      border: 1px solid var(--brox-border-light);
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    .stat-card-label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(5, 5, 5, 0.5);
+      margin-bottom: 8px;
+    }
+
+    .stat-card-value {
+      font-family: var(--font-display);
+      font-size: 32px;
+      font-weight: 700;
+      line-height: 1;
+    }
+
+    .stat-card-value.positive { color: var(--brox-teal); }
+    .stat-card-value.negative { color: var(--brox-pink); }
+    .stat-card-value.neutral { color: rgba(5, 5, 5, 0.4); }
+
+    .stat-card-sub {
+      font-family: var(--font-body);
+      font-size: 11px;
+      color: rgba(5, 5, 5, 0.5);
+      margin-top: 6px;
+    }
+
+    /* Horizontal Bar Chart */
+    .bar-chart {
+      margin: 24px 0;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .bar-label {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--brox-black);
+      width: 200px;
+      flex-shrink: 0;
+    }
+
+    .bar-container {
+      flex: 1;
+      height: 32px;
+      background: var(--brox-bg-light);
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .bar-fill {
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 12px;
+      min-width: 50px;
+    }
+
+    .bar-fill.blue { background: var(--brox-blue); }
+    .bar-fill.teal { background: var(--brox-teal); }
+    .bar-fill.pink { background: var(--brox-pink); }
+    .bar-fill.orange { background: var(--brox-orange); }
+
+    .bar-value {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--brox-white);
+    }
+
+    .bar-value-outside {
+      font-family: var(--font-display);
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--brox-black);
+      margin-left: 12px;
+    }
+
+    /* Scenario Grid */
+    .scenario-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 24px;
+      margin: 24px 0;
+    }
+
+    .scenario-card {
+      background: var(--brox-white);
+      border: 1px solid var(--brox-border-light);
+      padding: 20px;
+    }
+
+    .scenario-card h4 {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--brox-black);
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--brox-border-light);
+    }
+
+    .mini-bar-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 10px;
+      font-size: 12px;
+    }
+
+    .mini-bar-label {
+      width: 100px;
+      flex-shrink: 0;
+      font-weight: 500;
+    }
+
+    .mini-bar-track {
+      flex: 1;
+      height: 20px;
+      background: var(--brox-bg-light);
+      position: relative;
+    }
+
+    .mini-bar-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      padding-right: 6px;
+      min-width: 2px;
+    }
+
+    .mini-bar-net {
+      font-family: var(--font-display);
+      font-size: 10px;
+      font-weight: 700;
+      color: white;
+    }
+
+    .mini-bar-values {
+      display: flex;
+      gap: 4px;
+      margin-left: 10px;
+      font-size: 11px;
+      width: 45px;
+      flex-shrink: 0;
+    }
+
+    /* Comparison Cards */
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      margin: 24px 0;
+    }
+
+    .comparison-card {
+      background: var(--brox-white);
+      border: 1px solid var(--brox-border-light);
+      padding: 28px 24px;
+      text-align: center;
+    }
+
+    .comparison-card.highlight {
+      border: 2px solid var(--brox-teal);
+      background: rgba(38, 211, 174, 0.03);
+    }
+
+    .comparison-card-scenario {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      color: rgba(5, 5, 5, 0.5);
+      margin-bottom: 16px;
+    }
+
+    .comparison-card-value {
+      font-family: var(--font-display);
+      font-size: 40px;
+      font-weight: 700;
+      color: var(--brox-black);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .comparison-card-value.teal { color: var(--brox-teal); }
+    .comparison-card-value.pink { color: var(--brox-pink); }
+
+    .comparison-card-label {
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: rgba(5, 5, 5, 0.6);
+      margin-bottom: 16px;
+    }
+
+    .comparison-card-psychology {
+      font-family: var(--font-body);
+      font-size: 12px;
+      color: var(--brox-blue);
+      font-weight: 500;
+      padding-top: 16px;
+      border-top: 1px solid var(--brox-border-light);
+    }
+
+    /* Insight Box */
+    .insight-box {
+      background: rgba(0, 128, 255, 0.05);
+      border-left: 4px solid var(--brox-blue);
+      padding: 24px 28px;
+      margin: 28px 0;
+    }
+
+    .insight-box.pink {
+      background: rgba(255, 58, 112, 0.05);
+      border-left-color: var(--brox-pink);
+    }
+
+    .insight-box.teal {
+      background: rgba(38, 211, 174, 0.05);
+      border-left-color: var(--brox-teal);
+    }
+
+    .insight-box.orange {
+      background: rgba(255, 178, 0, 0.05);
+      border-left-color: var(--brox-orange);
+    }
+
+    .insight-box-label {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--brox-blue);
+      margin-bottom: 8px;
+    }
+
+    .insight-box.pink .insight-box-label { color: var(--brox-pink); }
+    .insight-box.teal .insight-box-label { color: var(--brox-teal); }
+    .insight-box.orange .insight-box-label { color: var(--brox-orange); }
+
+    .insight-box p {
+      font-family: var(--font-body);
+      font-size: 15px;
+      line-height: 1.6;
+      color: var(--brox-black);
+    }
+
+    /* Two Column Layout */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+    }
+
+    .col-card {
+      background: var(--brox-white);
+      border: 1px solid var(--brox-border-light);
+      padding: 24px;
+    }
+
+    .col-card h4 {
+      font-family: var(--font-display);
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 20px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--brox-border-light);
+    }
+
+    .col-card h4.teal { color: var(--brox-teal); }
+    .col-card h4.pink { color: var(--brox-pink); }
+
+    .reason-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.04);
+    }
+
+    .reason-row:last-child {
+      border-bottom: none;
+    }
+
+    .reason-name {
+      font-size: 13px;
+      color: var(--brox-black);
+    }
+
+    .reason-value {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .reason-value.teal { color: var(--brox-teal); }
+    .reason-value.pink { color: var(--brox-pink); }
+
+    /* Data Table */
+    .brox-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-family: var(--font-body);
+      font-size: 12px;
+      margin: 24px 0;
+    }
+
+    .brox-table th {
+      background: var(--brox-bg-light);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: rgba(5,5,5,0.6);
+      text-align: center;
+      padding: 10px 12px;
+      border-bottom: 2px solid var(--brox-border-light);
+    }
+
+    .brox-table th:first-child { text-align: left; }
+
+    .brox-table td {
+      padding: 10px 12px;
+      border-bottom: 1px solid var(--brox-border-light);
+      text-align: center;
+    }
+
+    .brox-table td:first-child { text-align: left; font-weight: 500; }
+
+    .baseline-row-table {
+      background: rgba(0, 128, 255, 0.05);
+    }
+
+    .highlight-row {
+      background: rgba(38, 211, 174, 0.08);
+    }
+
+    .positive-net {
+      color: var(--brox-teal);
+      font-weight: 600;
+    }
+
+    .negative-net {
+      color: var(--brox-pink);
+      font-weight: 600;
+    }
+
+    /* SVG Chart */
+    .svg-chart-wrapper {
+      margin: 24px 0;
+      overflow: visible;
+    }
+
+    .scenario-line-chart {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    /* Insight Cards (Pharma style) */
+    .insights-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 16px;
+      margin-top: 28px;
+    }
+
+    .insights-row-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .insight-card {
+      background: var(--brox-white);
+      border: 1px solid var(--brox-border-light);
+      border-radius: 0;
+      padding: 20px;
+      border-top: 3px solid var(--brox-blue);
+    }
+
+    .insight-card.teal { border-top-color: var(--brox-teal); }
+    .insight-card.pink { border-top-color: var(--brox-pink); }
+    .insight-card.orange { border-top-color: var(--brox-orange); }
+
+    .insight-card-label {
+      font-family: var(--font-body);
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--brox-blue);
+      margin-bottom: 8px;
+    }
+
+    .insight-card.teal .insight-card-label { color: #1a9e7d; }
+    .insight-card.pink .insight-card-label { color: var(--brox-pink); }
+    .insight-card.orange .insight-card-label { color: #b37d00; }
+
+    .insight-card-title {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--brox-black);
+      margin-bottom: 6px;
+    }
+
+    .insight-card-text {
+      font-family: var(--font-body);
+      font-size: 12px;
+      line-height: 1.5;
+      color: rgba(5,5,5,0.65);
+    }
+
+    /* What We Did Box */
+    .what-we-did-box {
+      background: var(--brox-white);
+      border: 1px solid var(--brox-border-light);
+      border-left: 3px solid var(--brox-blue);
+      padding: 24px 28px;
+      border-radius: 0;
+      margin-bottom: 0;
+    }
+
+    .what-we-did-box p {
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--brox-black);
+    }
+
+    .what-we-did-box strong {
+      color: var(--brox-blue);
+    }
+
+    /* Pillar Cards */
+    .pillars-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 24px;
+      margin-top: 32px;
+    }
+
+    .pillar-card {
+      background: var(--brox-white);
+      border: 1px solid var(--brox-border-light);
+      border-radius: 0;
+      padding: 28px;
+      position: relative;
+    }
+
+    .pillar-number {
+      font-family: var(--font-display);
+      font-size: 48px;
+      font-weight: 900;
+      color: rgba(0,128,255,0.08);
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      line-height: 1;
+    }
+
+    .pillar-title {
+      font-family: var(--font-display);
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--brox-black);
+      margin-bottom: 12px;
+    }
+
+    .pillar-desc {
+      font-family: var(--font-body);
+      font-size: 13px;
+      line-height: 1.6;
+      color: rgba(5,5,5,0.7);
+      margin-bottom: 16px;
+    }
+
+    .pillar-tag {
+      display: inline-block;
+      padding: 4px 10px;
+      background: rgba(0,128,255,0.1);
+      color: var(--brox-blue);
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      border-radius: 0;
+    }
+
+    .pillar-tag.teal {
+      background: rgba(38,211,174,0.1);
+      color: #1a9e7d;
+    }
+
+    .pillar-tag.pink {
+      background: rgba(255,58,112,0.1);
+      color: var(--brox-pink);
+    }
+
+    /* Capability Cards */
+    .capability-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 24px 0;
+    }
+
+    .capability-card {
+      background: var(--brox-bg-light);
+      padding: 24px 20px;
+      text-align: center;
+    }
+
+    .capability-icon {
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .capability-title {
+      font-family: var(--font-display);
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--brox-black);
+      margin-bottom: 8px;
+    }
+
+    .capability-desc {
+      font-size: 12px;
+      color: rgba(5,5,5,0.6);
+      line-height: 1.4;
+    }
+
+    /* Legend */
+    .legend {
+      display: flex;
+      gap: 24px;
+      margin: 16px 0 24px 0;
+      font-size: 12px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend-dot {
+      width: 12px;
+      height: 12px;
+    }
+
+    .legend-dot.pink { background: var(--brox-pink); }
+    .legend-dot.teal { background: var(--brox-teal); }
+    .legend-dot.blue { background: var(--brox-blue); }
+    .legend-dot.orange { background: var(--brox-orange); }
+
+    /* Footer */
+    .footer {
+      margin-top: 60px;
+      padding-top: 24px;
+      border-top: 1px solid var(--brox-border-light);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-logo {
+      height: 32px;
+      width: auto;
+    }
+
+    .footer-text {
+      font-size: 12px;
+      color: rgba(5,5,5,0.5);
+    }
+
+    .footer-contact {
+      font-size: 12px;
+      color: var(--brox-blue);
+    }
+
+    /* Chime-style scenario chart rows */
+    .chime-scenario-chart {
+      margin: 24px 0;
+    }
+
+    .chime-scenario-row {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+      padding: 12px 16px;
+      background: var(--brox-bg-light);
+    }
+
+    .chime-scenario-row.baseline-row {
+      background: rgba(0, 128, 255, 0.08);
+      border: 2px solid var(--brox-blue);
+    }
+
+    .chime-scenario-label {
+      width: 180px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .scenario-name {
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--brox-black);
+    }
+
+    .scenario-change {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+    }
+
+    .scenario-change.positive { color: var(--brox-teal); }
+    .scenario-change.negative { color: var(--brox-pink); }
+    .scenario-change.neutral { color: rgba(5,5,5,0.4); }
+
+    .chime-dual-bar {
+      flex: 1;
+      height: 32px;
+      background: var(--brox-white);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px;
+    }
+
+    .chime-bar-leave {
+      height: 100%;
+      background: var(--brox-pink);
+      opacity: 0.8;
+      min-width: 2px;
+    }
+
+    .chime-bar-join {
+      height: 100%;
+      background: var(--brox-teal);
+      min-width: 2px;
+    }
+
+    .chime-scenario-values {
+      width: 120px;
+      flex-shrink: 0;
+      display: flex;
+      gap: 16px;
+      justify-content: flex-end;
+      padding-left: 16px;
+    }
+
+    .leave-val {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--brox-pink);
+      width: 45px;
+      text-align: right;
+    }
+
+    .join-val {
+      font-family: var(--font-display);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--brox-teal);
+      width: 45px;
+      text-align: right;
+    }
+  </style>
+</head>
+<body>
+<header style="position: fixed; top: 0; left: 0; right: 0; height: 36px; z-index: 1; display: flex; flex-direction: row; align-items: center; justify-content: space-between; padding: 0 24px; background: #f8f8fc; border-bottom: 1px solid rgba(0, 0, 0, 0.03);">
+  <a href="https://reports.brox.ai" style="text-decoration: none;">
+    <img src="https://raw.githubusercontent.com/HBrock1/logo-assets/main/brox-brandmark.png" alt="Brox.AI" style="height: 18px; width: auto;">
+  </a>
+  <div>
+    <a href="mailto:humans@brox.ai" style="display: flex; align-items: center; gap: 6px; font-family: 'Inter', system-ui, sans-serif; font-size: 13px; font-weight: 400; color: rgba(5, 5, 5, 0.6); text-decoration: none;">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px;">
+        <rect x="2" y="4" width="20" height="16" rx="2"></rect>
+        <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+      </svg>
+      humans@brox.ai
+    </a>
+  </div>
+</header>
+
+  <!-- Header -->
+  <header class="header">
+    <img src="https://raw.githubusercontent.com/HBrock1/logo-assets/main/brox-logo.png" alt="Brox.AI" class="header-logo">
+    <span class="header-tag">Case Study</span>
+  </header>
+
+  <!-- Hero Section -->
+  <div class="hero">
+    <div class="hero-label">Powered by Digital Twins</div>
+    <h1>GLP-1 Perception Deep Dive</h1>
+    <p class="hero-subtitle">Understanding how people feel about GLP-1 drugs through 1:1 digital twins</p>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-value accent">900+</div>
+        <div class="hero-stat-label">Digital Twins</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value pink">&#8734;</div>
+        <div class="hero-stat-label">Scenarios Possible</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-value teal">&#8734;</div>
+        <div class="hero-stat-label">Combinations Possible</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Section 1: What We Did -->
+  <div class="section">
+    <div class="section-number">01. The Study</div>
+    <h2>What We Did</h2>
+    <div class="what-we-did-box">
+      <p>We asked <strong>900+ digital twins</strong> of real panelists, built from extensive AI-moderated behavioral interviews, to predict how individuals would respond to GLP-1 drug scenarios <strong>they had never been asked about before</strong>. By simulating their reactions across <strong>price sensitivity</strong>, <strong>behavioral segmentation</strong>, <strong>barriers and drivers</strong>, <strong>scenario combinations</strong>, <strong>channel influence</strong>, and <strong>segment-channel interactions</strong>, we generated predictive insights into GLP-1 perception at a depth and speed that traditional research cannot match.</p>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Section 2: What We Do -->
+  <div class="section">
+    <div class="section-number">02. The Brox.AI Platform</div>
+    <h2>What We Do</h2>
+    <p class="section-subtitle">Three capabilities that transform consumer research into predictive intelligence.</p>
+
+    <div class="pillars-grid">
+      <div class="pillar-card">
+        <div class="pillar-number">1</div>
+        <div class="pillar-title">Digital Twins</div>
+        <div class="pillar-desc">1:1 digital twins of real people, built from 5+ hour AI-moderated interviews per individual. Not personas. Not segments. Not statistical models.</div>
+        <span class="pillar-tag">Nationally Representative</span>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-number">2</div>
+        <div class="pillar-title">Predictive Simulation</div>
+        <div class="pillar-desc">Predict outcomes of real-world scenarios. Model recessions, rate changes, life events, and competitive moves. See who wins and loses before it happens. And crucially, <em>why</em>.</div>
+        <span class="pillar-tag teal">Unlimited Scenarios</span>
+      </div>
+      <div class="pillar-card">
+        <div class="pillar-number">3</div>
+        <div class="pillar-title">Continuous Intelligence</div>
+        <div class="pillar-desc">Brox.AI is an always-on strategic resource. Ask follow-up questions, model hundreds of outcomes or decisions over minutes, weeks, or months.</div>
+        <span class="pillar-tag pink">Always On</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Section 3: Price Sensitivity -->
+  <div class="section">
+    <div class="section-number">03. Price Sensitivity</div>
+    <h2>Price Is Not the Key Factor</h2>
+    <p class="section-subtitle">We asked 900+ digital twins how likely they would be to try a GLP-1 drug at four monthly price points. Each twin rated their likelihood on a 1&ndash;5 scale, where 5 = Most Likely and 1 = Least Likely. The results show that even making GLP-1s free barely moves the needle.</p>
+
+    <!-- Horizontal stacked bar chart -->
+    <div style="margin-top: 28px;">
+      <div style="display: flex; align-items: center; margin-bottom: 8px;">
+        <div style="font-family: var(--font-body); font-size: 12px; color: var(--brox-black); min-width: 110px; text-align: right; padding-right: 16px; font-weight: 500;">Free</div>
+        <div style="flex: 1; height: 36px; display: flex; border-radius: 0; overflow: hidden;">
+          <div style="width: 4%; background: var(--brox-teal); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: white; font-weight: 600;">4%</div>
+          <div style="width: 6%; background: rgba(38,211,174,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">6%</div>
+          <div style="width: 6%; background: var(--brox-orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">6%</div>
+          <div style="width: 21%; background: rgba(255,58,112,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">21%</div>
+          <div style="width: 63%; background: var(--brox-pink); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">63%</div>
+        </div>
+        <div style="min-width: 70px; text-align: right; padding-left: 12px;">
+          <span style="font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--brox-teal);">10%</span>
+          <span style="font-family: var(--font-body); font-size: 10px; color: rgba(5,5,5,0.4); margin-left: 2px;">open</span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; margin-bottom: 8px;">
+        <div style="font-family: var(--font-body); font-size: 12px; color: var(--brox-black); min-width: 110px; text-align: right; padding-right: 16px; font-weight: 500;">$10/mo</div>
+        <div style="flex: 1; height: 36px; display: flex; border-radius: 0; overflow: hidden;">
+          <div style="width: 4%; background: var(--brox-teal); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: white; font-weight: 600;">4%</div>
+          <div style="width: 7%; background: rgba(38,211,174,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">7%</div>
+          <div style="width: 4%; background: var(--brox-orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">4%</div>
+          <div style="width: 20%; background: rgba(255,58,112,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">20%</div>
+          <div style="width: 66%; background: var(--brox-pink); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">66%</div>
+        </div>
+        <div style="min-width: 70px; text-align: right; padding-left: 12px;">
+          <span style="font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--brox-teal);">11%</span>
+          <span style="font-family: var(--font-body); font-size: 10px; color: rgba(5,5,5,0.4); margin-left: 2px;">open</span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; margin-bottom: 8px;">
+        <div style="font-family: var(--font-body); font-size: 12px; color: var(--brox-black); min-width: 110px; text-align: right; padding-right: 16px; font-weight: 500;">$25/mo</div>
+        <div style="flex: 1; height: 36px; display: flex; border-radius: 0; overflow: hidden;">
+          <div style="width: 3%; background: var(--brox-teal); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: white; font-weight: 600;">3%</div>
+          <div style="width: 6%; background: rgba(38,211,174,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">6%</div>
+          <div style="width: 3%; background: var(--brox-orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">3%</div>
+          <div style="width: 19%; background: rgba(255,58,112,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">19%</div>
+          <div style="width: 70%; background: var(--brox-pink); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">70%</div>
+        </div>
+        <div style="min-width: 70px; text-align: right; padding-left: 12px;">
+          <span style="font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--brox-teal);">9%</span>
+          <span style="font-family: var(--font-body); font-size: 10px; color: rgba(5,5,5,0.4); margin-left: 2px;">open</span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; margin-bottom: 8px;">
+        <div style="font-family: var(--font-body); font-size: 12px; color: var(--brox-black); min-width: 110px; text-align: right; padding-right: 16px; font-weight: 500;">$50/mo</div>
+        <div style="flex: 1; height: 36px; display: flex; border-radius: 0; overflow: hidden;">
+          <div style="width: 3%; background: var(--brox-teal); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: white; font-weight: 600;">3%</div>
+          <div style="width: 5%; background: rgba(38,211,174,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">5%</div>
+          <div style="width: 2%; background: var(--brox-orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">2%</div>
+          <div style="width: 17%; background: rgba(255,58,112,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">17%</div>
+          <div style="width: 73%; background: var(--brox-pink); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">73%</div>
+        </div>
+        <div style="min-width: 70px; text-align: right; padding-left: 12px;">
+          <span style="font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--brox-teal);">8%</span>
+          <span style="font-family: var(--font-body); font-size: 10px; color: rgba(5,5,5,0.4); margin-left: 2px;">open</span>
+        </div>
+      </div>
+
+      <!-- Legend -->
+      <div style="display: flex; gap: 20px; margin-top: 16px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-body); font-size: 11px; color: rgba(5,5,5,0.6);"><div style="width: 12px; height: 12px; background: var(--brox-teal);"></div> 5 &ndash; Most Likely</div>
+        <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-body); font-size: 11px; color: rgba(5,5,5,0.6);"><div style="width: 12px; height: 12px; background: rgba(38,211,174,0.55);"></div> 4 &ndash; Likely</div>
+        <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-body); font-size: 11px; color: rgba(5,5,5,0.6);"><div style="width: 12px; height: 12px; background: var(--brox-orange);"></div> 3 &ndash; Neutral</div>
+        <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-body); font-size: 11px; color: rgba(5,5,5,0.6);"><div style="width: 12px; height: 12px; background: rgba(255,58,112,0.55);"></div> 2 &ndash; Unlikely</div>
+        <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-body); font-size: 11px; color: rgba(5,5,5,0.6);"><div style="width: 12px; height: 12px; background: var(--brox-pink);"></div> 1 &ndash; Least Likely</div>
+        <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-body); font-size: 11px; color: rgba(5,5,5,0.5); margin-left: 8px; border-left: 1px solid rgba(0,0,0,0.1); padding-left: 12px;"><span style="font-weight: 600; color: var(--brox-teal);">Open</span> = scored 4 or 5 (willing to try)</div>
+      </div>
+    </div>
+
+    <!-- Insights -->
+    <div class="insights-row insights-row-2" style="margin-top: 28px;">
+      <div class="insight-card teal">
+        <div class="insight-card-label">Key Finding</div>
+        <div class="insight-card-title">Free Doesn't Fix It</div>
+        <div class="insight-card-text">Offering GLP-1s for free produces virtually no difference from a $10 cost &ndash;10% vs 11% openness. Even at $0, 63% are "Least Likely" to try. The resistance is fundamentally attitudinal, not financial.</div>
+      </div>
+      <div class="insight-card pink">
+        <div class="insight-card-label">Pricing Strategy</div>
+        <div class="insight-card-title">Don't Discount &ndash;Communicate Value</div>
+        <div class="insight-card-text">The marginal drop from $10 to $50 is only ~3pp. Pricing strategy should focus on value communication rather than aggressive discounting &ndash;the real barriers lie in perceptions, trust, and side-effect fears.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Section 4: Segmentation -->
+  <div class="section">
+    <div class="section-number">04. Behavioral Segmentation</div>
+    <h2>Segment Any Way You Want</h2>
+    <p class="section-subtitle">With Brox.AI, you can create unlimited behavioral segments. Here we compare four attitudinal segments to reveal how different mindsets respond to GLP-1 drugs. Each bar shows the full distribution of likelihood scores (1&ndash;5) with the "open" percentage (scored 4 or 5) on the right.</p>
+
+    <!-- Comparison A: Side-Effect Attitude -->
+    <div style="margin-top: 32px;">
+      <div style="font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--brox-blue); margin-bottom: 4px;">Comparison A</div>
+      <div style="font-family: var(--font-body); font-size: 12px; color: rgba(5,5,5,0.5); margin-bottom: 16px;">Side-effect attitude &ndash;Avoidant vs Tolerant</div>
+
+      <div style="display: flex; align-items: center; margin-bottom: 8px;">
+        <div style="font-family: var(--font-body); font-size: 12px; color: var(--brox-black); min-width: 190px; text-align: right; padding-right: 16px; font-weight: 500;">Side-Effect Avoidant</div>
+        <div style="flex: 1; height: 36px; display: flex; border-radius: 0; overflow: hidden;">
+          <div style="width: 3%; background: var(--brox-teal); display: flex; align-items: center; justify-content: center;"></div>
+          <div style="width: 6%; background: rgba(38,211,174,0.55); display: flex; align-items: center; justify-content: center;"></div>
+          <div style="width: 3%; background: var(--brox-orange); display: flex; align-items: center; justify-content: center;"></div>
+          <div style="width: 18%; background: rgba(255,58,112,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">18%</div>
+          <div style="width: 71%; background: var(--brox-pink); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">71%</div>
+        </div>
+        <div style="min-width: 70px; text-align: right; padding-left: 12px;">
+          <span style="font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--brox-pink);">9%</span>
+          <span style="font-family: var(--font-body); font-size: 10px; color: rgba(5,5,5,0.4); margin-left: 2px;">open</span>
+        </div>
+      </div>
+
+      <div style="display: flex; align-items: center; margin-bottom: 8px;">
+        <div style="font-family: var(--font-body); font-size: 12px; color: var(--brox-black); min-width: 190px; text-align: right; padding-right: 16px; font-weight: 500;">Side-Effect Tolerant</div>
+        <div style="flex: 1; height: 36px; display: flex; border-radius: 0; overflow: hidden;">
+          <div style="width: 12%; background: var(--brox-teal); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">12%</div>
+          <div style="width: 19%; background: rgba(38,211,174,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">19%</div>
+          <div style="width: 12%; background: var(--brox-orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">12%</div>
+          <div style="width: 24%; background: rgba(255,58,112,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">24%</div>
+          <div style="width: 34%; background: var(--brox-pink); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">34%</div>
+        </div>
+        <div style="min-width: 70px; text-align: right; padding-left: 12px;">
+          <span style="font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--brox-teal);">31%</span>
+          <span style="font-family: var(--font-body); font-size: 10px; color: rgba(5,5,5,0.4); margin-left: 2px;">open</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Comparison B: Medication Attitude -->
+    <div style="margin-top: 28px;">
+      <div style="font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--brox-blue); margin-bottom: 4px;">Comparison B</div>
+      <div style="font-family: var(--font-body); font-size: 12px; color: rgba(5,5,5,0.5); margin-bottom: 16px;">Medication attitude &ndash;Skeptic vs Medication-First</div>
+
+      <div style="display: flex; align-items: center; margin-bottom: 8px;">
+        <div style="font-family: var(--font-body); font-size: 12px; color: var(--brox-black); min-width: 190px; text-align: right; padding-right: 16px; font-weight: 500;">Medication Skeptic</div>
+        <div style="flex: 1; height: 36px; display: flex; border-radius: 0; overflow: hidden; position: relative;">
+          <div style="width: 1%; background: var(--brox-teal); display: flex; align-items: center; justify-content: center;"></div>
+          <div style="width: 2%; background: rgba(38,211,174,0.55); display: flex; align-items: center; justify-content: center;"></div>
+          <div style="width: 2%; background: var(--brox-orange); display: flex; align-items: center; justify-content: center;"></div>
+          <div style="width: 16%; background: rgba(255,58,112,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">16%</div>
+          <div style="width: 79%; background: var(--brox-pink); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">79%</div>
+          <!-- Edge case callout arrow -->
+          <div style="position: absolute; left: 0; top: -2px; bottom: -2px; width: 3%; border: 2px dashed var(--brox-orange); background: rgba(255,178,0,0.12);"></div>
+        </div>
+        <div style="min-width: 70px; text-align: right; padding-left: 12px;">
+          <span style="font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--brox-pink);">3%</span>
+          <span style="font-family: var(--font-body); font-size: 10px; color: rgba(5,5,5,0.4); margin-left: 2px;">open</span>
+        </div>
+      </div>
+      <!-- Edge case annotation -->
+      <div style="margin-left: 190px; margin-top: -2px; margin-bottom: 12px; display: flex; align-items: flex-start; gap: 6px;">
+        <div style="width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent; border-bottom: 5px solid var(--brox-orange); margin-top: 2px;"></div>
+        <span style="font-family: var(--font-body); font-size: 10px; font-weight: 600; color: var(--brox-orange);">1% score 5/5 &ndash;who are they? See deep dive below</span>
+      </div>
+
+      <div style="display: flex; align-items: center; margin-bottom: 8px;">
+        <div style="font-family: var(--font-body); font-size: 12px; color: var(--brox-black); min-width: 190px; text-align: right; padding-right: 16px; font-weight: 500;">Medication-First Optimizer</div>
+        <div style="flex: 1; height: 36px; display: flex; border-radius: 0; overflow: hidden;">
+          <div style="width: 16%; background: var(--brox-teal); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">16%</div>
+          <div style="width: 21%; background: rgba(38,211,174,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">21%</div>
+          <div style="width: 9%; background: var(--brox-orange); display: flex; align-items: center; justify-content: center;"></div>
+          <div style="width: 27%; background: rgba(255,58,112,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">27%</div>
+          <div style="width: 27%; background: var(--brox-pink); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: white; font-weight: 600;">27%</div>
+        </div>
+        <div style="min-width: 70px; text-align: right; padding-left: 12px;">
+          <span style="font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--brox-teal);">37%</span>
+          <span style="font-family: var(--font-body); font-size: 10px; color: rgba(5,5,5,0.4); margin-left: 2px;">open</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Legend -->
+    <div style="display: flex; gap: 20px; margin-top: 20px; flex-wrap: wrap;">
+      <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-body); font-size: 11px; color: rgba(5,5,5,0.6);"><div style="width: 12px; height: 12px; background: var(--brox-teal);"></div> 5 &ndash; Most Likely</div>
+      <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-body); font-size: 11px; color: rgba(5,5,5,0.6);"><div style="width: 12px; height: 12px; background: rgba(38,211,174,0.55);"></div> 4 &ndash; Likely</div>
+      <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-body); font-size: 11px; color: rgba(5,5,5,0.6);"><div style="width: 12px; height: 12px; background: var(--brox-orange);"></div> 3 &ndash; Neutral</div>
+      <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-body); font-size: 11px; color: rgba(5,5,5,0.6);"><div style="width: 12px; height: 12px; background: rgba(255,58,112,0.55);"></div> 2 &ndash; Unlikely</div>
+      <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-body); font-size: 11px; color: rgba(5,5,5,0.6);"><div style="width: 12px; height: 12px; background: var(--brox-pink);"></div> 1 &ndash; Least Likely</div>
+      <div style="display: flex; align-items: center; gap: 6px; font-family: var(--font-body); font-size: 11px; color: rgba(5,5,5,0.5); margin-left: 8px; border-left: 1px solid rgba(0,0,0,0.1); padding-left: 12px;"><span style="font-weight: 600; color: var(--brox-teal);">Open</span> = scored 4 or 5</div>
+    </div>
+
+    <!-- Insights -->
+    <div class="insights-row insights-row-2" style="margin-top: 28px;">
+      <div class="insight-card teal">
+        <div class="insight-card-label">Highest Opportunity</div>
+        <div class="insight-card-title">Medication-First: 37% Open</div>
+        <div class="insight-card-text">This segment shows 12x higher openness than Medication Skeptics. They already believe in pharmaceutical solutions &ndash;the path to conversion is about addressing specific GLP-1 concerns, not fundamental attitudes.</div>
+      </div>
+      <div class="insight-card pink">
+        <div class="insight-card-label">Key Barrier</div>
+        <div class="insight-card-title">Side-Effect Fear Cuts Openness by 3.4x</div>
+        <div class="insight-card-text">Side-Effect Avoidant segments are only 9% open vs 31% for Tolerant. Addressing side-effect perceptions through education and real-world evidence could unlock significant demand.</div>
+      </div>
+    </div>
+
+    <!-- Edge Case Deep Dive -->
+    <div style="margin-top: 28px; border: 1px solid var(--brox-border-light); border-left: 3px solid var(--brox-orange);">
+      <div style="padding: 24px 28px;">
+        <div style="font-family: var(--font-body); font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--brox-orange); margin-bottom: 8px;">Deep Dive &ndash;Edge Case</div>
+        <div style="font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--brox-black); margin-bottom: 10px;">The 1% of Medication Skeptics Who Score 5/5</div>
+        <p style="font-family: var(--font-body); font-size: 14px; line-height: 1.6; color: rgba(5,5,5,0.7); margin-bottom: 20px;">With our unmatched ability to dive into incredible detail at the individual level, we can see exactly who that 1% is and uncover the underlying causes behind their decisions. That 1% corresponds to <strong style="color: var(--brox-black);">4 digital twins</strong>, each revealing different reasoning:</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div style="background: rgba(255,178,0,0.06); padding: 16px 20px;">
+            <div style="font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--brox-orange); margin-bottom: 6px;">Twin 1 &ndash;Serious Illness Override</div>
+            <p style="font-family: var(--font-body); font-size: 12px; line-height: 1.5; color: rgba(5,5,5,0.65);">Willing to consider GLP-1s when facing serious conditions. Pragmatic about medication despite general skepticism.</p>
+          </div>
+          <div style="background: rgba(255,178,0,0.06); padding: 16px 20px;">
+            <div style="font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--brox-orange); margin-bottom: 6px;">Twin 2 &ndash;Trusted Source Recommendation</div>
+            <p style="font-family: var(--font-body); font-size: 12px; line-height: 1.5; color: rgba(5,5,5,0.65);">Open to GLP-1s specifically because of recommendations from trusted healthcare providers or personal connections.</p>
+          </div>
+          <div style="background: rgba(255,178,0,0.06); padding: 16px 20px;">
+            <div style="font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--brox-orange); margin-bottom: 6px;">Twin 3 &ndash;Past Adverse Experience</div>
+            <p style="font-family: var(--font-body); font-size: 12px; line-height: 1.5; color: rgba(5,5,5,0.65);">Had a negative experience with depression medication years ago, driving deep distrust. Yet open to GLP-1s due to specific health anxieties.</p>
+          </div>
+          <div style="background: rgba(255,178,0,0.06); padding: 16px 20px;">
+            <div style="font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--brox-orange); margin-bottom: 6px;">Twin 4 &ndash;Health-Conscious Pragmatist</div>
+            <p style="font-family: var(--font-body); font-size: 12px; line-height: 1.5; color: rgba(5,5,5,0.65);">Proactive about health through supplements and exercise. Values natural approaches but pragmatic when necessary.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Section 5: Barriers & Drivers -->
+  <div class="section">
+    <div class="section-number">05. Barriers &amp; Drivers</div>
+    <h2>What Stops &amp; What Starts GLP-1 Adoption</h2>
+    <p class="section-subtitle">We asked our digital twins to explain the factors that prevent and encourage GLP-1 adoption. The results reveal that barriers are diffuse and emotional, while one driver dominates all others.</p>
+
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-top: 28px;">
+
+      <!-- Barriers Column -->
+      <div>
+        <div style="font-family: var(--font-display); font-size: 14px; font-weight: 700; color: var(--brox-pink); margin-bottom: 16px;">Barriers to Adoption</div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">Side Effect Fears</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 84%; height: 100%; background: var(--brox-pink); display: flex; align-items: center; padding-left: 8px;"><span style="font-family: var(--font-display); font-size: 11px; font-weight: 600; color: white;">53%</span></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">Negative GLP-1 Perceptions</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 70%; height: 100%; background: var(--brox-pink); display: flex; align-items: center; padding-left: 8px;"><span style="font-family: var(--font-display); font-size: 11px; font-weight: 600; color: white;">44%</span></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">Prefer Natural / Lifestyle</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 67%; height: 100%; background: var(--brox-pink); display: flex; align-items: center; padding-left: 8px;"><span style="font-family: var(--font-display); font-size: 11px; font-weight: 600; color: white;">42%</span></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">Healthcare System Distrust</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 48%; height: 100%; background: var(--brox-pink); display: flex; align-items: center; padding-left: 8px;"><span style="font-family: var(--font-display); font-size: 11px; font-weight: 600; color: white;">30%</span></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">New Drug Distrust</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 30%; height: 100%; background: rgba(255,58,112,0.6); display: flex; align-items: center; padding-left: 8px;"><span style="font-family: var(--font-display); font-size: 11px; font-weight: 600; color: white;">19%</span></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">Long-Term Medication Fear</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 16%; height: 100%; background: rgba(255,58,112,0.6); display: flex; align-items: center; padding-left: 8px;"><span style="font-family: var(--font-display); font-size: 11px; font-weight: 600; color: white;">10%</span></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">Injection Aversion</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 14%; height: 100%; background: rgba(255,58,112,0.6); display: flex; align-items: center; padding-left: 8px;"><span style="font-family: var(--font-display); font-size: 11px; font-weight: 600; color: white;">9%</span></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">Medication Aversion</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 13%; height: 100%; background: rgba(255,58,112,0.6); display: flex; align-items: center; padding-left: 8px;"><span style="font-family: var(--font-display); font-size: 11px; font-weight: 600; color: white;">8%</span></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">Drug Interaction Concerns</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 10%; height: 100%; background: rgba(255,58,112,0.5); display: flex; align-items: center; padding-left: 8px;"><span style="font-family: var(--font-display); font-size: 11px; font-weight: 600; color: white;">6%</span></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">Past Bad Experience</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 8%; height: 100%; background: rgba(255,58,112,0.5);"></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">No Perceived Need</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 5%; height: 100%; background: rgba(255,58,112,0.5);"></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">Cost / Insurance</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 5%; height: 100%; background: rgba(255,58,112,0.5);"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Drivers Column -->
+      <div>
+        <div style="font-family: var(--font-display); font-size: 14px; font-weight: 700; color: #1a9e7d; margin-bottom: 16px;">Drivers of Adoption</div>
+        <div style="display: flex; flex-direction: column; gap: 6px;">
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">Doctor Recommendation</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 100%; height: 100%; background: var(--brox-teal); display: flex; align-items: center; padding-left: 8px;"><span style="font-family: var(--font-display); font-size: 11px; font-weight: 600; color: white;">63%</span></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">Low Cost / Affordability</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 38%; height: 100%; background: var(--brox-teal); display: flex; align-items: center; padding-left: 8px;"><span style="font-family: var(--font-display); font-size: 11px; font-weight: 600; color: white;">24%</span></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">FDA Approval / Proof</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 30%; height: 100%; background: rgba(38,211,174,0.7); display: flex; align-items: center; padding-left: 8px;"><span style="font-family: var(--font-display); font-size: 11px; font-weight: 600; color: white;">19%</span></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">Minimal Side Effects</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 29%; height: 100%; background: rgba(38,211,174,0.7); display: flex; align-items: center; padding-left: 8px;"><span style="font-family: var(--font-display); font-size: 11px; font-weight: 600; color: white;">18%</span></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">Weight Loss / Health Need</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 25%; height: 100%; background: rgba(38,211,174,0.7); display: flex; align-items: center; padding-left: 8px;"><span style="font-family: var(--font-display); font-size: 11px; font-weight: 600; color: white;">16%</span></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">Effectiveness / Results</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 24%; height: 100%; background: rgba(38,211,174,0.7); display: flex; align-items: center; padding-left: 8px;"><span style="font-family: var(--font-display); font-size: 11px; font-weight: 600; color: white;">15%</span></div></div>
+          </div>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 150px; text-align: right; font-weight: 500;">Family / Peer Success</div>
+            <div style="flex: 1; height: 24px; background: rgba(0,0,0,0.04);"><div style="width: 2%; height: 100%; background: rgba(38,211,174,0.5);"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insights -->
+    <div class="insights-row insights-row-2" style="margin-top: 28px;">
+      <div class="insight-card pink">
+        <div class="insight-card-label">Top Barrier</div>
+        <div class="insight-card-title">Side Effect Fears Dominate at 53%</div>
+        <div class="insight-card-text">Over half of all resistance traces back to side effect concerns. Combined with negative perceptions (44%) and preference for natural approaches (42%), the top 3 barriers are all perception-based &ndash;not financial.</div>
+      </div>
+      <div class="insight-card teal">
+        <div class="insight-card-label">Top Driver</div>
+        <div class="insight-card-title">Doctor Recommendation Towers at 63%</div>
+        <div class="insight-card-text">One driver dominates all others by nearly 3x. The most effective strategy is physician-led education that directly addresses side effect concerns &ndash;bridging the #1 barrier with the #1 driver.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Section 6: Momentum Shift -->
+  <div class="section">
+    <div class="section-number">06. Shifting Momentum Without Trial</div>
+    <h2>How Different Support Methods Move the Needle</h2>
+    <p class="section-subtitle">We tested how layering support measures &ndash;nutritionist access, peer groups, and symptom tracking &ndash;shifts the likelihood distribution without requiring a single trial dose</p>
+
+    <!-- Stacked vertical bar chart -->
+    <div style="margin-top: 28px; position: relative;">
+
+      <!-- Chart area -->
+      <div>
+
+        <!-- Bars container -->
+        <div style="position: relative; height: 360px; border-bottom: 1px solid rgba(0,0,0,0.12);">
+
+
+          <!-- Bar columns container — bars grow upward from bottom -->
+          <div style="display: flex; height: 100%; align-items: flex-end; gap: 0; padding: 0 12px;">
+
+            <!-- Baseline -->
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
+              <div style="width: 68px; display: flex; flex-direction: column; margin-top: auto;">
+                <div style="height: calc(360px * 0.07); background: rgba(38,211,174,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">7%</div>
+                <div style="height: calc(360px * 0.07); background: rgba(200,200,210,0.45); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">7%</div>
+                <div style="height: calc(360px * 0.20); background: var(--brox-orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 10px; color: #050505; font-weight: 600;">20%</div>
+                <div style="height: calc(360px * 0.66); background: var(--brox-pink); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">66%</div>
+              </div>
+            </div>
+
+            <!-- Nutritionist Support -->
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
+              <div style="width: 68px; display: flex; flex-direction: column; margin-top: auto;">
+                <div style="height: calc(360px * 0.05); background: var(--brox-teal); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: white; font-weight: 600;">5%</div>
+                <div style="height: calc(360px * 0.07); background: rgba(38,211,174,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">7%</div>
+                <div style="height: calc(360px * 0.06); background: rgba(200,200,210,0.45); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">6%</div>
+                <div style="height: calc(360px * 0.42); background: var(--brox-orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 11px; color: #050505; font-weight: 600;">42%</div>
+                <div style="height: calc(360px * 0.40); background: var(--brox-pink); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">40%</div>
+              </div>
+            </div>
+
+            <!-- Patient Support Group: 42,43,0,8,0 = 93 → scale to 100 -->
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
+              <div style="width: 68px; display: flex; flex-direction: column; margin-top: auto;">
+                <div style="height: calc(360px * 0.086); background: rgba(38,211,174,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">8%</div>
+                <div style="height: calc(360px * 0.462); background: var(--brox-orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 11px; color: #050505; font-weight: 600;">43%</div>
+                <div style="height: calc(360px * 0.452); background: var(--brox-pink); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">42%</div>
+              </div>
+            </div>
+
+            <!-- Symptom Tracking App: 46,39,5,6,0 = 96 → scale to 100 -->
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
+              <div style="width: 68px; display: flex; flex-direction: column; margin-top: auto;">
+                <div style="height: calc(360px * 0.0625); background: rgba(38,211,174,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">6%</div>
+                <div style="height: calc(360px * 0.052); background: rgba(200,200,210,0.45); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">5%</div>
+                <div style="height: calc(360px * 0.406); background: var(--brox-orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 11px; color: #050505; font-weight: 600;">39%</div>
+                <div style="height: calc(360px * 0.479); background: var(--brox-pink); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">46%</div>
+              </div>
+            </div>
+
+            <!-- Nutritionist + App -->
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
+              <div style="width: 68px; display: flex; flex-direction: column; margin-top: auto;">
+                <div style="height: calc(360px * 0.05); background: var(--brox-teal); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: white; font-weight: 600;">5%</div>
+                <div style="height: calc(360px * 0.08); background: rgba(38,211,174,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">8%</div>
+                <div style="height: calc(360px * 0.06); background: rgba(200,200,210,0.45); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">6%</div>
+                <div style="height: calc(360px * 0.42); background: var(--brox-orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 11px; color: #050505; font-weight: 600;">42%</div>
+                <div style="height: calc(360px * 0.39); background: var(--brox-pink); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">39%</div>
+              </div>
+            </div>
+
+            <!-- Nutritionist + Group -->
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
+              <div style="width: 68px; display: flex; flex-direction: column; margin-top: auto;">
+                <div style="height: calc(360px * 0.06); background: var(--brox-teal); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: white; font-weight: 600;">6%</div>
+                <div style="height: calc(360px * 0.08); background: rgba(38,211,174,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">8%</div>
+                <div style="height: calc(360px * 0.05); background: rgba(200,200,210,0.45); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">5%</div>
+                <div style="height: calc(360px * 0.43); background: var(--brox-orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 11px; color: #050505; font-weight: 600;">43%</div>
+                <div style="height: calc(360px * 0.39); background: var(--brox-pink); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">39%</div>
+              </div>
+            </div>
+
+            <!-- App + Support Group -->
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
+              <div style="width: 68px; display: flex; flex-direction: column; margin-top: auto;">
+                <div style="height: calc(360px * 0.05); background: var(--brox-teal); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: white; font-weight: 600;">5%</div>
+                <div style="height: calc(360px * 0.08); background: rgba(38,211,174,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">8%</div>
+                <div style="height: calc(360px * 0.06); background: rgba(200,200,210,0.45); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">6%</div>
+                <div style="height: calc(360px * 0.42); background: var(--brox-orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 11px; color: #050505; font-weight: 600;">42%</div>
+                <div style="height: calc(360px * 0.40); background: var(--brox-pink); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">40%</div>
+              </div>
+            </div>
+
+            <!-- All Three Combined -->
+            <div style="flex: 1; display: flex; flex-direction: column; align-items: center; height: 100%;">
+              <div style="width: 68px; display: flex; flex-direction: column; margin-top: auto;">
+                <div style="height: calc(360px * 0.05); background: var(--brox-teal); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: white; font-weight: 600;">5%</div>
+                <div style="height: calc(360px * 0.08); background: rgba(38,211,174,0.55); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">8%</div>
+                <div style="height: calc(360px * 0.05); background: rgba(200,200,210,0.45); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 9px; color: #050505; font-weight: 600;">5%</div>
+                <div style="height: calc(360px * 0.42); background: var(--brox-orange); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 11px; color: #050505; font-weight: 600;">42%</div>
+                <div style="height: calc(360px * 0.40); background: var(--brox-pink); display: flex; align-items: center; justify-content: center; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">40%</div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- X-axis: individual labels -->
+        <div style="display: flex; padding: 0 12px; margin-top: 6px;">
+          <div style="flex: 1; text-align: center; font-family: var(--font-body); font-size: 9px; color: rgba(5,5,5,0.6); line-height: 1.3;">$10/mo Baseline<br>(No Support)</div>
+          <div style="flex: 1; text-align: center; font-family: var(--font-body); font-size: 9px; color: rgba(5,5,5,0.6); line-height: 1.3;">Nutritionist<br>Support</div>
+          <div style="flex: 1; text-align: center; font-family: var(--font-body); font-size: 9px; color: rgba(5,5,5,0.6); line-height: 1.3;">Patient Support<br>Group</div>
+          <div style="flex: 1; text-align: center; font-family: var(--font-body); font-size: 9px; color: rgba(5,5,5,0.6); line-height: 1.3;">Symptom Tracking<br>App</div>
+          <div style="flex: 1; text-align: center; font-family: var(--font-body); font-size: 9px; color: rgba(5,5,5,0.6); line-height: 1.3;">Nutritionist +<br>App</div>
+          <div style="flex: 1; text-align: center; font-family: var(--font-body); font-size: 9px; color: rgba(5,5,5,0.6); line-height: 1.3;">Nutritionist +<br>Support Group</div>
+          <div style="flex: 1; text-align: center; font-family: var(--font-body); font-size: 9px; color: rgba(5,5,5,0.6); line-height: 1.3;">App +<br>Support Group</div>
+          <div style="flex: 1; text-align: center; font-family: var(--font-body); font-size: 9px; color: rgba(5,5,5,0.6); line-height: 1.3;">All Three<br>Combined</div>
+        </div>
+
+        <!-- X-axis: group bracket labels -->
+        <div style="display: flex; padding: 0 12px; margin-top: 6px;">
+          <!-- Baseline: spans 1 column -->
+          <div style="flex: 1; text-align: center; border-top: 1px solid rgba(5,5,5,0.25); padding-top: 4px; margin: 0 4px;">
+            <span style="font-family: var(--font-body); font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(5,5,5,0.35);">Baseline</span>
+          </div>
+          <!-- Single Measure: spans 3 columns -->
+          <div style="flex: 3; text-align: center; border-top: 1px solid rgba(5,5,5,0.25); padding-top: 4px; margin: 0 4px;">
+            <span style="font-family: var(--font-body); font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(5,5,5,0.35);">Single Measure</span>
+          </div>
+          <!-- Pairs of Two: spans 3 columns -->
+          <div style="flex: 3; text-align: center; border-top: 1px solid rgba(5,5,5,0.25); padding-top: 4px; margin: 0 4px;">
+            <span style="font-family: var(--font-body); font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(5,5,5,0.35);">Pairs of Two</span>
+          </div>
+          <!-- All Three: spans 1 column -->
+          <div style="flex: 1; text-align: center; border-top: 1px solid rgba(5,5,5,0.25); padding-top: 4px; margin: 0 4px;">
+            <span style="font-family: var(--font-body); font-size: 8px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: rgba(5,5,5,0.35);">All Three</span>
+          </div>
+        </div>
+
+        <!-- Legend -->
+        <div style="display: flex; gap: 18px; margin-top: 20px; justify-content: center; flex-wrap: wrap; padding: 12px 16px; background: rgba(0,0,0,0.015); border: 1px solid rgba(0,0,0,0.06);">
+          <div style="font-family: var(--font-body); font-size: 10px; font-weight: 600; color: rgba(5,5,5,0.5); margin-right: 4px;">Likelihood of Using GLP-1</div>
+          <div style="display: flex; align-items: center; gap: 5px; font-family: var(--font-body); font-size: 10px; color: rgba(5,5,5,0.6);"><div style="width: 12px; height: 12px; background: var(--brox-teal);"></div> 5 &ndash; Definitely will</div>
+          <div style="display: flex; align-items: center; gap: 5px; font-family: var(--font-body); font-size: 10px; color: rgba(5,5,5,0.6);"><div style="width: 12px; height: 12px; background: rgba(38,211,174,0.55);"></div> 4 &ndash; Probably will</div>
+          <div style="display: flex; align-items: center; gap: 5px; font-family: var(--font-body); font-size: 10px; color: rgba(5,5,5,0.6);"><div style="width: 12px; height: 12px; background: rgba(200,200,210,0.45);"></div> 3 &ndash; Neutral</div>
+          <div style="display: flex; align-items: center; gap: 5px; font-family: var(--font-body); font-size: 10px; color: rgba(5,5,5,0.6);"><div style="width: 12px; height: 12px; background: var(--brox-orange);"></div> 2 &ndash; Probably won&rsquo;t</div>
+          <div style="display: flex; align-items: center; gap: 5px; font-family: var(--font-body); font-size: 10px; color: rgba(5,5,5,0.6);"><div style="width: 12px; height: 12px; background: var(--brox-pink);"></div> 1 &ndash; Definitely won&rsquo;t</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Insights -->
+    <div class="insights-row" style="margin-top: 28px;">
+      <div class="insight-card pink">
+        <div class="insight-card-label">The Hidden Shift</div>
+        <div class="insight-card-title">"Definitely Won't" Drops 26pp</div>
+        <div class="insight-card-text">Hard resistance collapses from 66% to ~40% with any support measure. These people don't convert to "yes" &ndash;they shift to "probably won't," a softer position that's far more persuadable over time.</div>
+      </div>
+      <div class="insight-card teal">
+        <div class="insight-card-label">Best Combination</div>
+        <div class="insight-card-title">Nutritionist + Group Peaks at 14%</div>
+        <div class="insight-card-text">Professional expertise paired with community support produces the highest positive intent &ndash;even higher than all three combined (13%). Adding a third measure yields diminishing returns.</div>
+      </div>
+      <div class="insight-card orange">
+        <div class="insight-card-label">Strategic Implication</div>
+        <div class="insight-card-title">Support Creates Future Converts</div>
+        <div class="insight-card-text">The 26pp shift from hard to soft rejection is the real ROI of support measures. These "probably won't" individuals are the pool from which future adopters will emerge with continued exposure and trust-building.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Section 7: Channel Influence -->
+  <div class="section">
+    <div class="section-number">07. Channel Influence</div>
+    <h2>Which Information Channels Move the Needle?</h2>
+    <p class="section-subtitle">Since the main barrier to GLP-1 adoption is not cost but psychological &ndash;fear of side effects, skepticism toward medication &ndash;we tested how exposure to different information channels affects openness to trying a GLP-1 drug. Each digital twin was asked: would this channel make you more open?</p>
+
+    <!-- Single Channel Bar Chart -->
+    <div style="margin-top: 28px;">
+      <div style="font-family: var(--font-body); font-size: 11px; font-weight: 600; color: rgba(5,5,5,0.45); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 14px;">Single Channel Impact &ndash;% more open after exposure</div>
+
+      <!-- Bars: sorted descending, two-line labels, thicker bars -->
+      <div style="display: flex; align-items: center; margin-bottom: 6px;">
+        <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); width: 200px; min-width: 200px; text-align: right; padding-right: 14px; font-weight: 500; line-height: 1.3;">Endocrinologist or Obesity<br>Specialist Recommendation</div>
+        <div style="flex: 1; height: 36px; display: flex; overflow: hidden;">
+          <div style="width: 68.3%; background: var(--brox-blue); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">41%</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; margin-bottom: 6px;">
+        <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); width: 200px; min-width: 200px; text-align: right; padding-right: 14px; font-weight: 500; line-height: 1.3;">Primary Care Physician<br>Recommendation</div>
+        <div style="flex: 1; height: 36px; display: flex; overflow: hidden;">
+          <div style="width: 66.7%; background: var(--brox-blue); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">40%</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; margin-bottom: 6px;">
+        <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); width: 200px; min-width: 200px; text-align: right; padding-right: 14px; font-weight: 500; line-height: 1.3;">Friends or Family Having<br>Success with GLP-1s</div>
+        <div style="flex: 1; height: 36px; display: flex; overflow: hidden;">
+          <div style="width: 31.7%; background: var(--brox-blue); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">19%</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; margin-bottom: 6px;">
+        <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); width: 200px; min-width: 200px; text-align: right; padding-right: 14px; font-weight: 500; line-height: 1.3;">Nurse Practitioner /<br>PA Counseling</div>
+        <div style="flex: 1; height: 36px; display: flex; overflow: hidden;">
+          <div style="width: 23.3%; background: var(--brox-blue); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">14%</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; margin-bottom: 6px;">
+        <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); width: 200px; min-width: 200px; text-align: right; padding-right: 14px; font-weight: 500; line-height: 1.3;">Pharmacist<br>Consultation</div>
+        <div style="flex: 1; height: 36px; display: flex; overflow: hidden;">
+          <div style="width: 8.3%; background: var(--brox-blue); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">5%</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; margin-bottom: 6px;">
+        <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); width: 200px; min-width: 200px; text-align: right; padding-right: 14px; font-weight: 500; line-height: 1.3;">Healthcare<br>Podcast</div>
+        <div style="flex: 1; height: 36px; display: flex; overflow: hidden;">
+          <div style="width: 5%; background: var(--brox-blue); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">3%</div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; margin-bottom: 6px;">
+        <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); width: 200px; min-width: 200px; text-align: right; padding-right: 14px; font-weight: 500; line-height: 1.3;">Signage in<br>Local Pharmacy</div>
+        <div style="flex: 1; height: 36px; display: flex; overflow: hidden;">
+          <div style="width: 3.3%; background: var(--brox-blue);"></div>
+        </div>
+      </div>
+      <div style="display: flex; align-items: center; margin-bottom: 6px;">
+        <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); width: 200px; min-width: 200px; text-align: right; padding-right: 14px; font-weight: 500; line-height: 1.3;">Social Media<br>Influencer</div>
+        <div style="flex: 1; height: 36px; display: flex; overflow: hidden;">
+          <div style="width: 1.7%; background: var(--brox-blue);"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Deep Dive: PCP Interactions -->
+    <div style="margin-top: 40px;">
+      <div style="font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--brox-black); margin-bottom: 6px;">Deep Dive: How Other Channels Interact with PCP Advice</div>
+      <p style="font-family: var(--font-body); font-size: 12px; color: rgba(5,5,5,0.55); line-height: 1.5; margin-bottom: 24px;">Primary Care Physician recommendation is one of the highest-influence channels at 40%. But does combining it with other channels amplify or diminish that effect? We tested three PCP pairings to find out.</p>
+
+      <!-- PCP baseline reference bar -->
+      <div style="display: flex; align-items: center; margin-bottom: 16px; padding-bottom: 16px; border-bottom: 1px dashed rgba(0,0,0,0.1);">
+        <div style="font-family: var(--font-body); font-size: 11px; color: rgba(5,5,5,0.5); min-width: 220px; text-align: right; padding-right: 14px; font-weight: 500;">PCP Alone (baseline)</div>
+        <div style="flex: 1; height: 26px; display: flex; overflow: hidden;">
+          <div style="width: 66.7%; background: rgba(0,128,255,0.25); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-family: var(--font-body); font-size: 11px; color: var(--brox-blue); font-weight: 600;">40%</div>
+        </div>
+      </div>
+
+      <!-- PCP + Friends/Family -->
+      <div style="display: flex; align-items: center; margin-bottom: 7px;">
+        <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 220px; text-align: right; padding-right: 14px; font-weight: 500;">PCP + Friends/Family Success</div>
+        <div style="flex: 1; height: 30px; display: flex; overflow: hidden;">
+          <div style="width: 88.3%; background: var(--brox-teal); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">53%</div>
+        </div>
+        <div style="min-width: 60px; padding-left: 10px; font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--brox-teal);">+13pp</div>
+      </div>
+
+      <!-- PCP + Endocrinologist -->
+      <div style="display: flex; align-items: center; margin-bottom: 7px;">
+        <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 220px; text-align: right; padding-right: 14px; font-weight: 500;">PCP + Endocrinologist</div>
+        <div style="flex: 1; height: 30px; display: flex; overflow: hidden;">
+          <div style="width: 76.7%; background: var(--brox-teal); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">46%</div>
+        </div>
+        <div style="min-width: 60px; padding-left: 10px; font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--brox-teal);">+6pp</div>
+      </div>
+
+      <!-- PCP + Pharmacy Signage (negative) -->
+      <div style="display: flex; align-items: center; margin-bottom: 7px;">
+        <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 220px; text-align: right; padding-right: 14px; font-weight: 500;">PCP + Signage in Local Pharmacy</div>
+        <div style="flex: 1; height: 30px; display: flex; overflow: hidden;">
+          <div style="width: 60%; background: var(--brox-pink); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">36%</div>
+        </div>
+        <div style="min-width: 60px; padding-left: 10px; font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--brox-pink);">&minus;4pp</div>
+      </div>
+
+      <!-- Recovery: PCP + Signage + Family -->
+      <div style="display: flex; align-items: center; margin-bottom: 7px; margin-top: 2px;">
+        <div style="font-family: var(--font-body); font-size: 11px; color: var(--brox-black); min-width: 220px; text-align: right; padding-right: 14px; font-weight: 500;">PCP + Signage + Family <span style="font-size: 9px; color: var(--brox-orange); font-weight: 600;">(recovery)</span></div>
+        <div style="flex: 1; height: 30px; display: flex; overflow: hidden;">
+          <div style="width: 85%; background: var(--brox-orange); display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; font-family: var(--font-body); font-size: 11px; color: white; font-weight: 600;">51%</div>
+        </div>
+        <div style="min-width: 60px; padding-left: 10px; font-family: var(--font-display); font-size: 12px; font-weight: 700; color: var(--brox-orange);">+11pp</div>
+      </div>
+    </div>
+
+    <!-- Insights -->
+    <div class="insights-row" style="margin-top: 28px;">
+      <div class="insight-card teal">
+        <div class="insight-card-label">Top Finding</div>
+        <div class="insight-card-title">Social Proof Is the Strongest Amplifier</div>
+        <div class="insight-card-text">Friends/Family success stories paired with PCP advice reach 53% &ndash; the highest of any combination and a +13pp lift. People trust their doctor, but seeing someone they know succeed is what tips the scale.</div>
+      </div>
+      <div class="insight-card pink">
+        <div class="insight-card-label">Warning</div>
+        <div class="insight-card-title">Retail Context Actively Hurts</div>
+        <div class="insight-card-text">Pharmacy signage combined with PCP drops openness to 36% &ndash; 4pp below PCP alone. The commercial setting undermines clinical trust. However, adding family success stories back into the mix recovers it to 51%.</div>
+      </div>
+      <div class="insight-card orange">
+        <div class="insight-card-label">Strategic Implication</div>
+        <div class="insight-card-title">Channel Interactions Are Non-Linear</div>
+        <div class="insight-card-text">Dual clinical authority (PCP + Specialist) only adds 6pp, while social proof adds 13pp. The highest-impact strategy isn't stacking credentials &ndash; it's pairing clinical advice with relatable, real-world outcomes.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Section 8: Segment x Channel Spider Web -->
+  <div class="section">
+    <div class="section-number">08 / Segment x Channel</div>
+    <h2>How Different Segments Respond to Channels</h2>
+    <p class="section-subtitle">Channel influence across five distinct behavioral segments</p>
+
+    <div class="legend" style="justify-content: center; margin-bottom: 8px;">
+      <div class="legend-item"><div class="legend-dot blue"></div> Considering a GLP-1</div>
+      <div class="legend-item"><div class="legend-dot teal"></div> Overweight or Obese</div>
+      <div class="legend-item"><div class="legend-dot orange"></div> Yo-Yo Dieting</div>
+      <div class="legend-item"><div class="legend-dot pink"></div> Health-Literacy Challenged</div>
+      <div class="legend-item"><div class="legend-dot" style="background: rgba(5,5,5,0.3);"></div> All Respondents</div>
+    </div>
+
+    <!-- Radar Chart SVG -->
+    <div style="text-align: center; margin: 20px 0;">
+      <svg viewBox="0 0 700 550" width="650" height="510" xmlns="http://www.w3.org/2000/svg" style="font-family: Inter, sans-serif;">
+        <g transform="translate(370,260)">
+          <circle cx="0" cy="0" r="60" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="1"/>
+          <circle cx="0" cy="0" r="120" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="1"/>
+          <circle cx="0" cy="0" r="180" fill="none" stroke="rgba(0,0,0,0.06)" stroke-width="1"/>
+
+          <text x="63" y="-8" font-size="8" fill="rgba(0,0,0,0.3)" text-anchor="middle">20%</text>
+          <text x="123" y="-8" font-size="8" fill="rgba(0,0,0,0.3)" text-anchor="middle">40%</text>
+          <text x="183" y="-8" font-size="8" fill="rgba(0,0,0,0.3)" text-anchor="middle">60%</text>
+
+          <line x1="0" y1="0" x2="0" y2="-200" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
+          <line x1="0" y1="0" x2="141" y2="-141" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
+          <line x1="0" y1="0" x2="200" y2="0" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
+          <line x1="0" y1="0" x2="141" y2="141" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
+          <line x1="0" y1="0" x2="0" y2="200" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
+          <line x1="0" y1="0" x2="-141" y2="141" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
+          <line x1="0" y1="0" x2="-200" y2="0" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
+          <line x1="0" y1="0" x2="-141" y2="-141" stroke="rgba(0,0,0,0.08)" stroke-width="1"/>
+
+          <text x="0" y="-210" text-anchor="middle" font-size="10" font-weight="500" fill="#050505">Friends/Family</text>
+          <text x="158" y="-152" text-anchor="start" font-size="10" font-weight="500" fill="#050505">Nurse/PA</text>
+          <text x="210" y="4" text-anchor="start" font-size="10" font-weight="500" fill="#050505">Pharmacist</text>
+          <text x="152" y="158" text-anchor="start" font-size="10" font-weight="500" fill="#050505">Podcasts</text>
+          <text x="0" y="220" text-anchor="middle" font-size="10" font-weight="500" fill="#050505">Social Media</text>
+          <text x="-152" y="158" text-anchor="end" font-size="10" font-weight="500" fill="#050505">Pharmacy Signage</text>
+          <text x="-210" y="4" text-anchor="end" font-size="10" font-weight="500" fill="#050505">Primary Care Physician</text>
+          <text x="-152" y="-152" text-anchor="end" font-size="10" font-weight="500" fill="#050505">Endocrinologist</text>
+
+          <!-- Considering GLP-1: 41,32,19,25,19,9,61,56 (Y-mirrored) -->
+          <polygon points="0,-123 68,-68 57,0 53,53 0,57 -19,19 -183,0 -119,-119"
+            fill="rgba(0,128,255,0.12)" stroke="#0080ff" stroke-width="2"/>
+
+          <!-- Overweight/Obese: 38,29,12,10,5,5,51,51 (Y-mirrored) -->
+          <polygon points="0,-114 62,-62 36,0 21,21 0,15 -11,11 -153,0 -108,-108"
+            fill="rgba(38,211,174,0.10)" stroke="#26d3ae" stroke-width="2"/>
+
+          <!-- Yo-Yo Dieting: 34,25,12,7,5,0,45,47 (Y-mirrored) -->
+          <polygon points="0,-102 53,-53 36,0 15,15 0,15 0,0 -135,0 -100,-100"
+            fill="rgba(255,178,0,0.10)" stroke="#ffb200" stroke-width="2"/>
+
+          <!-- Health-Lit Challenged: 17,11,6,0,0,3,23,21 (Y-mirrored) -->
+          <polygon points="0,-51 23,-23 18,0 0,0 0,0 -6,6 -69,0 -45,-45"
+            fill="rgba(255,58,112,0.10)" stroke="#ff3a70" stroke-width="2"/>
+
+          <!-- All Respondents: 19,15,5,3,1,2,40,40 (Y-mirrored) -->
+          <polygon points="0,-57 32,-32 15,0 6,6 0,3 -4,4 -120,0 -85,-85"
+            fill="rgba(5,5,5,0.06)" stroke="rgba(5,5,5,0.35)" stroke-width="1.5" stroke-dasharray="4,3"/>
+
+          <circle cx="0" cy="-123" r="3" fill="#0080ff"/>
+          <circle cx="68" cy="-68" r="3" fill="#0080ff"/>
+          <circle cx="57" cy="0" r="3" fill="#0080ff"/>
+          <circle cx="53" cy="53" r="3" fill="#0080ff"/>
+          <circle cx="0" cy="57" r="3" fill="#0080ff"/>
+          <circle cx="-19" cy="19" r="3" fill="#0080ff"/>
+          <circle cx="-183" cy="0" r="3" fill="#0080ff"/>
+          <circle cx="-119" cy="-119" r="3" fill="#0080ff"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="insights-row" style="margin-top: 24px;">
+      <div class="insight-card">
+        <div class="insight-card-label">Considering GLP-1</div>
+        <div class="insight-card-title">Considerers Respond at 2&ndash;19x the Rate</div>
+        <div class="insight-card-text">Those already considering a GLP-1 respond to nearly every channel at dramatically higher rates. Healthcare podcasts reach 25% of this segment vs just 3% overall. Social media influencers reach 19% vs 1%.</div>
+      </div>
+      <div class="insight-card pink">
+        <div class="insight-card-label">Health-Literacy Challenged</div>
+        <div class="insight-card-title">Low-Literacy Segment Caps at 23%</div>
+        <div class="insight-card-text">The health-literacy challenged segment shows dramatically lower responsiveness across all channels (23% max vs 61% for considerers). This group requires fundamentally different outreach through trusted local touchpoints.</div>
+      </div>
+      <div class="insight-card orange">
+        <div class="insight-card-label">Yo-Yo Dieting &amp; Health-Lit Challenged</div>
+        <div class="insight-card-title">Near-Zero Effectiveness for Emerging Channels</div>
+        <div class="insight-card-text">Social media influencers, pharmacy signage, and healthcare podcasts show near-zero effectiveness for both the health-literacy challenged and yo-yo dieting segments. Traditional provider-led channels remain the only viable path to reach these groups.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="section-divider">
+
+  <!-- Section 9: Platform Capabilities -->
+  <div class="section">
+    <div class="section-number">09 / Platform Capabilities</div>
+    <h2>What Brox.AI Enables</h2>
+    <p class="section-subtitle">Transform any business question into predictive insight</p>
+
+    <div class="capability-grid">
+      <div class="capability-card">
+        <div class="capability-icon">&#8734;</div>
+        <div class="capability-title">Unlimited Scenarios</div>
+        <div class="capability-desc">Test any support measure, price point, messaging angle, or combination &ndash; and layer them together without panel fatigue</div>
+      </div>
+      <div class="capability-card">
+        <div class="capability-icon">?</div>
+        <div class="capability-title">The &ldquo;Why&rdquo; Behind Decisions</div>
+        <div class="capability-desc">Access reasoning at the individual level: not just what, but why</div>
+      </div>
+      <div class="capability-card">
+        <div class="capability-icon">&#8599;</div>
+        <div class="capability-title">Measure Momentum Shifts</div>
+        <div class="capability-desc">Quantify how attitudes and intent shift across scenarios &ndash; see exactly what moves the needle on perception</div>
+      </div>
+      <div class="capability-card">
+        <div class="capability-icon">&#9783;</div>
+        <div class="capability-title">Any Segmentation</div>
+        <div class="capability-desc">Slice results by demographics, psychographics, or any dimension you imagine</div>
+      </div>
+    </div>
+
+    <div class="insight-box teal">
+      <div class="insight-box-label">The Brox Advantage</div>
+      <p>Traditional research answers one question at a time. Brox.AI lets you explore a parallel universe of possibilities: testing every scenario, understanding every segment, and predicting every outcome before making costly business decisions.</p>
+    </div>
+  </div>
+
+  <!-- Footer -->
+  <div class="footer">
+    <img src="https://raw.githubusercontent.com/HBrock1/logo-assets/main/brox-logo.png" alt="Brox.AI" class="footer-logo">
+    <span class="footer-text">GLP-1 Perception Deep Dive | February 2026</span>
+    <span class="footer-contact">www.brox.ai</span>
+  </div>
+
+</body>
+</html>
